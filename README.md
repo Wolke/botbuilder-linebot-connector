@@ -2,7 +2,7 @@
 Bot builder with Mongo Db(custom storage )
 
 ## Introduction 
-
+This example code is create to show how we can store our bot session data into MongoDb
 
 ## Motivation
 Microsoft bot builder bydefault store data  internally in Microsoft storage which have 64 Kb size limit per user.Other option to store data is Microsoft Azure Table and Microsoft Document Db.which doesn't have any data limit per user.
