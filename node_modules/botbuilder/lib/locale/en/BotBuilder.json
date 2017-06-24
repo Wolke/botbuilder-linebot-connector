@@ -1,0 +1,13 @@
+{
+    "default_text": "I didn't understand. Please try again.",
+    "default_number": "I didn't recognize that as a number. Please enter a number.",
+    "default_confirm": "I didn't understand. Please answer 'yes' or 'no'.",
+    "list_or": " or ",
+    "list_or_more": ", or ",
+    "confirm_yes": "yes",
+    "confirm_no": "no",
+    "default_choice": "I didn't understand. Please choose an option from the list.",
+    "default_time": "I didn't recognize the time you entered. Please try again using a format of (MM/DD/YYYY HH:MM:SS).",
+    "default_file": "I didn't receive a file. Please try again.",
+    "default_error": "Oops. Something went wrong and we need to start over."
+}   

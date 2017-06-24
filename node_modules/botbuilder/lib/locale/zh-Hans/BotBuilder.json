@@ -1,0 +1,13 @@
+{
+    "default_text": "我没听明白。请重复。",
+    "default_number": "这好像不是数字. 请输入数字",
+    "default_confirm": "我没听明白。 请选择'是'或'否'。",
+    "list_or": "或",
+    "list_or_more": ", 或",
+    "confirm_yes": "是",
+    "confirm_no": "否",
+    "default_choice": "我没听明白。请从可选项中选择。",
+    "default_time": "这好像不是日期，时间。 请输入日期，时间 (月月/日日/年年年年 时时:分分:秒秒)。",
+    "default_file": "我没有收到文件，请再传一次。",
+    "default_error": "啊呀。发生故障了，我需要重启。"
+}   
