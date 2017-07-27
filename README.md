@@ -1,5 +1,5 @@
-https://drive.google.com/file/d/0B0_ddFOVPj0xNUpfek1tTFpsVG8/view
-
+I created video  which demonstrate how You can store session and user data into mongo db 
+Find here [https://youtu.be/S0oO81oG2GY](url)
 # BotBuilder-MongoDB
 Bot builder with Mongo Db(custom storage )
 
