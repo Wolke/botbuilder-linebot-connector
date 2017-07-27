@@ -3,7 +3,7 @@ var builder = require('botbuilder');
 
 var istorage= require('./lib/IStorageClient');
 var azure = require('./lib/AzureBotStorage.js');
-
+var conf = require('./config/conf.js');
 
 //=========================================================
 // Bot Setup
@@ -16,8 +16,8 @@ server.listen(process.env.port || process.env.PORT || 3980, function () {
 
 // Create chat bot
 var connector = new builder.ChatConnector({
-    appId:"appid here",
-    appPassword:"app password here"
+    appId:conf.appId,
+    appPassword:conf.appPass
 });
 
 
@@ -52,6 +52,7 @@ bot.dialog('/profile', [
         builder.Prompts.text(session, 'Hi! What is your name?');
     },
     function (session, results) {
+        console.log("results.response==>",results.response);
         session.userData.name = results.response;
         session.endDialog();
     }
