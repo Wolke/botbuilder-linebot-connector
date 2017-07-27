@@ -18,21 +18,20 @@ var Consts = require('./Consts');
 var mongodb_1 = require("mongodb");
 var replaceDot_Atrate = require("./replaceDot");
 var mongoDbConnection = require('./connection.js');
-var conf = require('../config');
-var conversational_collname = conf.db.conversationalCollection;
+var conf = require('../config/conf.js');
+var collectionName =conf.CollectionName;
 
 var IStorageClient = (function () {
-
     function IStorageClient(options) {
         this.options = options;
     }
-
+    
     IStorageClient.prototype.retrieve = function (partitionKey, rowKey, callback) {
         var id = partitionKey + ',' + rowKey;
         if(rowKey!=="userData"){
             var query={"$and":[{"userid":id}]}
                 mongoDbConnection(function(err,db) {
-                var iterator= db.collection(conversational_collname).find(query);
+                var iterator= db.collection(collectionName).find(query);
                 iterator.toArray(function (error, result, responseHeaders) {
                     if (error) {
                         console.log("Error",error)
@@ -54,13 +53,12 @@ var IStorageClient = (function () {
             var query={"$and":[{"userid":partitionKey}]}
             mongoDbConnection(function(err,db) { 
 
-                var iterator= db.collection(conversational_collname).find(query);
+                var iterator= db.collection(collectionName).find(query);
                 iterator.toArray(function (error, result, responseHeaders) {
                     if (error) {
                         callback(error, null, null);
                     }
                     else if (result.length == 0) {
-                        //console.log("result length 0")
                         callback(null, null, null);
                     }
                     else {
@@ -71,15 +69,15 @@ var IStorageClient = (function () {
             });
         }
     };
-
+    
     IStorageClient.prototype.initialize = function (callback) {
         var _this = this;
         var client=mongodb_1.MongoClient;
         this.client = client;
-
+     
         mongoDbConnection(function(err,database) {    
                 _this.database = database;
-                _this.collection = database.collection(conversational_collname);
+                _this.collection = database.collection(collectionName);
                 callback(null);
          });
     };
@@ -96,7 +94,7 @@ var IStorageClient = (function () {
                 "$set": {"data":newEntitiy,"isCompressed":false}
             };   
             mongoDbConnection(function(error,db) {    
-                db.collection(conversational_collname).update(conditions1,updateobj1,{upsert: true},function(err,res){
+                db.collection(collectionName).update(conditions1,updateobj1,{upsert: true},function(err,res){
                 callback(error, null,"");
             });
             });
@@ -109,23 +107,23 @@ var IStorageClient = (function () {
                 "$set": {"data":entity}
             }
             mongoDbConnection(function(error,db) {    
-                db.collection(conversational_collname).update(conditions,update,{upsert: true},function(err,res){
+                db.collection(collectionName).update(conditions,update,{upsert: true},function(err,res){
                 callback(error, null,"");
            })
         });
         } 
     };
-
-
+    
     IStorageClient.getError = function (error) {
         if (!error)
             return null;
         return new Error('Error Code: ' + error.code + ' Error Body: ' + error.body);
     };
-
+    
     return IStorageClient;
 }());
 exports.IStorageClient = IStorageClient;
+
 
 
 
@@ -135,10 +133,7 @@ exports.IStorageClient = IStorageClient;
 2. sudo npm install mongodb --save
 
 ## Steps and Code Details
-
-MongoDb connection Ip and Port Can modify in lib/connection.js
-
-Mention collection name in (lib/IStorageClient.js) var conversational_collname ="collection name here"
+Mongo Db Ip address and Mongo Port in config/conf.js
 
 I implemented IStorageClient(lib/IStorageClient.js) interface which internally use replaceDot(lib/replaceDot.js).
 
@@ -156,5 +151,6 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false },docDbClient); /
 var bot = new builder.UniversalBot(connector).set('storage', tableStorage);//set your storage here
 
 ## Reference Link:
-1. [https://github.com/Microsoft/BotBuilder/issues/1943](https://github.com/Microsoft/BotBuilder/issues/1943)
-2. [http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder](http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder)
+1.[https://drive.google.com/file/d/0B0_ddFOVPj0xNUpfek1tTFpsVG8/view](https://drive.google.com/file/d/0B0_ddFOVPj0xNUpfek1tTFpsVG8/view)
+2. [https://github.com/Microsoft/BotBuilder/issues/1943](https://github.com/Microsoft/BotBuilder/issues/1943)
+3. [http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder](http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder)
