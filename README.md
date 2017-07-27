@@ -151,6 +151,6 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false },docDbClient); /
 var bot = new builder.UniversalBot(connector).set('storage', tableStorage);//set your storage here
 
 ## Reference Link:
-1.[https://drive.google.com/file/d/0B0_ddFOVPj0xNUpfek1tTFpsVG8/view](https://drive.google.com/file/d/0B0_ddFOVPj0xNUpfek1tTFpsVG8/view)
+1.[https://youtu.be/S0oO81oG2GY](https://youtu.be/S0oO81oG2GY)
 2. [https://github.com/Microsoft/BotBuilder/issues/1943](https://github.com/Microsoft/BotBuilder/issues/1943)
 3. [http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder](http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder)
