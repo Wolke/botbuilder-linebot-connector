@@ -16,9 +16,9 @@
 
 var _ = require('underscore');
 var util = require('util');
-var guid = require('node-uuid');
+var guid = require('uuid');
 
-var azureCommon = require('./../../../common/common');
+var azureCommon = require('./../../../common/common.core');
 var azureutil = azureCommon.util;
 var SR = azureCommon.SR;
 
