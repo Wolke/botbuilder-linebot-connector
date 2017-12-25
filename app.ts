@@ -18,6 +18,7 @@ var tableStorage = new azure.AzureBotStorage({
 
 // var connector = new builder.ConsoleConnector().listen();
 var connector = new LineConnector({
+    hasPushApi: false,
     // Miss Tarot 塔羅小姐
     channelId: process.env.channelId || "1487202031",
     channelSecret: process.env.channelSecret || "64078989ba8249519163b052eca6bc58",
@@ -31,8 +32,6 @@ var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //se
 
 bot.dialog('/', [
     function (session, args, next) {
-
-        console.log("/")
         if (!session.userData.name) {
             session.beginDialog('/profile');
         } else {
@@ -40,13 +39,17 @@ bot.dialog('/', [
         }
     },
     function (session, results) {
-        session.send('Hello %s!', session.userData.name);
+        session.send('Hello 1 %s!', session.userData.name);
+        session.send('Hello 2 %s!', session.userData.name);
+        session.send('Hello 3 %s!', session.userData.name);
+        session.send('Hello 4 %s!', session.userData.name);
+        session.send('Hello 5 %s!', session.userData.name);
+        session.send('Hello 6 %s!', session.userData.name);
     }
 ]);
 
 bot.dialog('/profile', [
     function (session) {
-
         console.log("/profile")
         builder.Prompts.text(session, 'Hi! What is your name?');
     },

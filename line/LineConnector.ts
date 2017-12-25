@@ -10,14 +10,18 @@ export class LineConnector implements botbuilder.IConnector {
     headers;
     endpoint;
     botId;
+    hasPushApi = false;
 
     //from dispatch
     replyToken;
     options;
-    userId;
+    conversationId;
+    event_cache = [];
 
     //form botframework
     handler;
+
+
 
     constructor(options) {
         this.options = options || {};
@@ -27,6 +31,10 @@ export class LineConnector implements botbuilder.IConnector {
         if (this.options.verify === undefined) {
             this.options.verify = true;
         }
+        if (this.options.hasPushApi !== undefined) {
+            this.hasPushApi = this.options.hasPushApi;
+        }
+
         this.headers = {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -60,6 +68,23 @@ export class LineConnector implements botbuilder.IConnector {
             });
         };
     }
+
+    addReplyToken(replyToken) {
+
+        const _this = this;
+        _this.replyToken = replyToken;
+        console.log("addReplyToken1", _this.replyToken, _this.event_cache)
+
+        setTimeout(() => {
+            console.log("addReplyToken2", _this.replyToken)
+            if (_this.replyToken && _this.event_cache.length > 0) {
+                _this.reply(_this.replyToken, _this.event_cache);
+            }
+            _this.replyToken = null;
+            _this.event_cache = [];
+
+        }, 1000)
+    }
     dispatch(body, res) {
         // console.log("dispatch")
         const _this = this;
@@ -67,8 +92,8 @@ export class LineConnector implements botbuilder.IConnector {
             return;
         }
         body.events.forEach(event => {
-            console.log("event", event)
-            _this.replyToken = event.replyToken;
+            // console.log("event", event)
+            _this.addReplyToken(event.replyToken)
 
             let m: any = {
                 timestamp: new Date(parseInt(event.timestamp)).toISOString(),
@@ -82,6 +107,9 @@ export class LineConnector implements botbuilder.IConnector {
                 case 'user':
                     m.address.conversation.name = "user";
                     m.address.conversation.id = event.source.userId;
+                    _this.conversationId = event.source.userId;
+
+
                     m.address.channel.id = event.source.userId;
                     m.address.user.name = "user";
                     m.address.user.id = event.source.userId;
@@ -95,12 +123,16 @@ export class LineConnector implements botbuilder.IConnector {
                 case 'group':
                     m.address.conversation.name = "group";
                     m.address.conversation.id = event.source.groupId;
+                    _this.conversationId = event.source.groupId;
+
                     m.address.channel.id = event.source.groupId;
 
                     break;
                 case 'room':
                     m.address.conversation.name = "room";
                     m.address.conversation.id = event.source.roomId;
+                    _this.conversationId = event.source.roomId;
+
                     m.address.channel.id = event.source.roomId;
 
                     break;
@@ -159,7 +191,6 @@ export class LineConnector implements botbuilder.IConnector {
                     m.type = 'conversationUpdate'
 
                     break;
-                //   return replyText(event.replyToken, 'Got followed event');
 
                 case 'unfollow':
 
@@ -167,46 +198,123 @@ export class LineConnector implements botbuilder.IConnector {
                     m.type = 'conversationUpdate'
 
                     break;
-                //   return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
 
                 case 'join':
                     m.type = 'conversationUpdate'
 
                     break;
-                //   return replyText(event.replyToken, `Joined ${event.source.type}`);
 
                 case 'leave':
                     m.type = 'conversationUpdate'
                     break;
-                //   return console.log(`Left: ${JSON.stringify(event)}`);
                 case 'postback':
 
                     let data = event.postback.data;
                     if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
                         data += `(${JSON.stringify(event.postback.params)})`;
                     }
-                    //   return replyText(event.replyToken, `Got postback: ${data}`);
 
                     break;
                 case 'beacon':
                     break;
-                //   return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
 
                 default:
                     throw new Error(`Unknown event: ${JSON.stringify(event)}`);
                     break;
             }
-            console.log("m",m)
+            console.log("m", m)
             _this.handler([m]);
 
         })
     }
     onEvent(handler) {
-        console.log(handler)
         this.handler = handler;
     };
-    send(messages, done) {
+    static createMessages(message) {
+        // console.log(message)
+        if (typeof message === 'string') {
+            return [{ type: 'text', text: message }];
+        }
 
+        if (Array.isArray(message)) {
+            return message.map(function (m) {
+                if (typeof m === 'string') {
+                    return { type: 'text', text: m };
+                }
+                return m;
+            });
+        }
+        return [message];
+    }
+    post(path, body) {
+        // console.log(path, body)
+        let r;
+        try {
+            r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
+        } catch (er) {
+            console.log(er)
+        }
+        return r
+    }
+    reply(replyToken, message) {
+
+        let m = LineConnector.createMessages(message);
+        const body = {
+            replyToken: replyToken,
+            messages: m
+        };
+        console.log("reply", replyToken, body)
+
+        return this.post('/message/reply', body).then(function (res) {
+            return res.json();
+        });
+    }
+
+    push(toId, message) {
+        let m = LineConnector.createMessages(message);
+
+        const body = {
+            to: toId,
+            messages: m
+        };
+        console.log("body", body)
+        return this.post('/message/push', body).then(function (res) {
+            return res.json();
+        });
+    }
+
+    getRenderTemplate(event) {
+        var _this = this;
+        // console.log("getRenderTemplate", event)
+        switch (event.type) {
+            case 'message':
+                if (event.text) {
+                    return {
+                        type: 'text',
+                        text: event.text
+                    }
+                }
+        }
+    }
+    send(messages, done) {
+        // let ts = [];
+        const _this = this;
+
+        messages.map(e => {
+            // console.log("e", e)
+            if (_this.hasPushApi) {
+                _this.push(_this.conversationId, _this.getRenderTemplate(e))
+            } else if (_this.replyToken) {
+                _this.event_cache.push(_this.getRenderTemplate(e))
+                if (_this.event_cache.length === 5) {
+                    _this.reply(_this.replyToken, _this.event_cache);
+                    _this.replyToken = null;
+                    _this.event_cache = [];
+                }
+            } else {
+                throw `no way to send message: ` + e
+            }
+        })
     }
     startConversation(address, callback) {
         console.log(address);

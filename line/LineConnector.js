@@ -6,12 +6,17 @@ var url = require('url');
 var bodyParser = require("body-parser");
 var LineConnector = /** @class */ (function () {
     function LineConnector(options) {
+        this.hasPushApi = false;
+        this.event_cache = [];
         this.options = options || {};
         this.options.channelId = options.channelId || '';
         this.options.channelSecret = options.channelSecret || '';
         this.options.channelAccessToken = options.channelAccessToken || '';
         if (this.options.verify === undefined) {
             this.options.verify = true;
+        }
+        if (this.options.hasPushApi !== undefined) {
+            this.hasPushApi = this.options.hasPushApi;
         }
         this.headers = {
             Accept: 'application/json',
@@ -45,6 +50,19 @@ var LineConnector = /** @class */ (function () {
             });
         };
     };
+    LineConnector.prototype.addReplyToken = function (replyToken) {
+        var _this = this;
+        _this.replyToken = replyToken;
+        console.log("addReplyToken1", _this.replyToken, _this.event_cache);
+        setTimeout(function () {
+            console.log("addReplyToken2", _this.replyToken);
+            if (_this.replyToken && _this.event_cache.length > 0) {
+                _this.reply(_this.replyToken, _this.event_cache);
+            }
+            _this.replyToken = null;
+            _this.event_cache = [];
+        }, 1000);
+    };
     LineConnector.prototype.dispatch = function (body, res) {
         // console.log("dispatch")
         var _this = this;
@@ -52,8 +70,8 @@ var LineConnector = /** @class */ (function () {
             return;
         }
         body.events.forEach(function (event) {
-            console.log("event", event);
-            _this.replyToken = event.replyToken;
+            // console.log("event", event)
+            _this.addReplyToken(event.replyToken);
             var m = {
                 timestamp: new Date(parseInt(event.timestamp)).toISOString(),
                 address: {
@@ -66,6 +84,7 @@ var LineConnector = /** @class */ (function () {
                 case 'user':
                     m.address.conversation.name = "user";
                     m.address.conversation.id = event.source.userId;
+                    _this.conversationId = event.source.userId;
                     m.address.channel.id = event.source.userId;
                     m.address.user.name = "user";
                     m.address.user.id = event.source.userId;
@@ -77,11 +96,13 @@ var LineConnector = /** @class */ (function () {
                 case 'group':
                     m.address.conversation.name = "group";
                     m.address.conversation.id = event.source.groupId;
+                    _this.conversationId = event.source.groupId;
                     m.address.channel.id = event.source.groupId;
                     break;
                 case 'room':
                     m.address.conversation.name = "room";
                     m.address.conversation.id = event.source.roomId;
+                    _this.conversationId = event.source.roomId;
                     m.address.channel.id = event.source.roomId;
                     break;
             }
@@ -131,30 +152,24 @@ var LineConnector = /** @class */ (function () {
                     m.id = event.source.userId;
                     m.type = 'conversationUpdate';
                     break;
-                //   return replyText(event.replyToken, 'Got followed event');
                 case 'unfollow':
                     m.id = event.source.userId;
                     m.type = 'conversationUpdate';
                     break;
-                //   return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
                 case 'join':
                     m.type = 'conversationUpdate';
                     break;
-                //   return replyText(event.replyToken, `Joined ${event.source.type}`);
                 case 'leave':
                     m.type = 'conversationUpdate';
                     break;
-                //   return console.log(`Left: ${JSON.stringify(event)}`);
                 case 'postback':
                     var data = event.postback.data;
                     if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
                         data += "(" + JSON.stringify(event.postback.params) + ")";
                     }
-                    //   return replyText(event.replyToken, `Got postback: ${data}`);
                     break;
                 case 'beacon':
                     break;
-                //   return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
                 default:
                     throw new Error("Unknown event: " + JSON.stringify(event));
                     break;
@@ -164,11 +179,90 @@ var LineConnector = /** @class */ (function () {
         });
     };
     LineConnector.prototype.onEvent = function (handler) {
-        console.log(handler);
         this.handler = handler;
     };
     ;
+    LineConnector.createMessages = function (message) {
+        // console.log(message)
+        if (typeof message === 'string') {
+            return [{ type: 'text', text: message }];
+        }
+        if (Array.isArray(message)) {
+            return message.map(function (m) {
+                if (typeof m === 'string') {
+                    return { type: 'text', text: m };
+                }
+                return m;
+            });
+        }
+        return [message];
+    };
+    LineConnector.prototype.post = function (path, body) {
+        // console.log(path, body)
+        var r;
+        try {
+            r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
+        }
+        catch (er) {
+            console.log(er);
+        }
+        return r;
+    };
+    LineConnector.prototype.reply = function (replyToken, message) {
+        var m = LineConnector.createMessages(message);
+        var body = {
+            replyToken: replyToken,
+            messages: m
+        };
+        console.log("reply", replyToken, body);
+        return this.post('/message/reply', body).then(function (res) {
+            return res.json();
+        });
+    };
+    LineConnector.prototype.push = function (toId, message) {
+        var m = LineConnector.createMessages(message);
+        var body = {
+            to: toId,
+            messages: m
+        };
+        console.log("body", body);
+        return this.post('/message/push', body).then(function (res) {
+            return res.json();
+        });
+    };
+    LineConnector.prototype.getRenderTemplate = function (event) {
+        var _this = this;
+        // console.log("getRenderTemplate", event)
+        switch (event.type) {
+            case 'message':
+                if (event.text) {
+                    return {
+                        type: 'text',
+                        text: event.text
+                    };
+                }
+        }
+    };
     LineConnector.prototype.send = function (messages, done) {
+        // let ts = [];
+        var _this = this;
+        messages.map(function (e) {
+            // console.log("e", e)
+            if (_this.hasPushApi) {
+                _this.push(_this.conversationId, _this.getRenderTemplate(e));
+            }
+            else if (_this.replyToken) {
+                _this.event_cache.push(_this.getRenderTemplate(e));
+                if (_this.event_cache.length === 5) {
+                    _this.reply(_this.replyToken, _this.event_cache);
+                    _this.replyToken = null;
+                    _this.event_cache = [];
+                }
+            }
+            else {
+                throw "no way to send message: " + e;
+            }
+        });
     };
     LineConnector.prototype.startConversation = function (address, callback) {
         console.log(address);
