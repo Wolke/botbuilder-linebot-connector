@@ -233,6 +233,7 @@ var LineConnector = /** @class */ (function () {
     LineConnector.prototype.getRenderTemplate = function (event) {
         var _this = this;
         // console.log("getRenderTemplate", event)
+        //20170825 should be there
         switch (event.type) {
             case 'message':
                 if (event.text) {

@@ -286,6 +286,7 @@ export class LineConnector implements botbuilder.IConnector {
     getRenderTemplate(event) {
         var _this = this;
         // console.log("getRenderTemplate", event)
+        //20170825 should be there
         switch (event.type) {
             case 'message':
                 if (event.text) {

@@ -1,7 +1,12 @@
 {
-  "name": "mc_manny",
+  "name": "line-builder",
   "version": "0.0.1",
-  "description": "Manacola Manny Services",
+  "description": "line botframework builder",
+  "scripts": {
+    "dev":"tsc --watch & nodemon  ./app.js",
+  
+    "dev2":"tsc --watch & nodemon --inspect-brk=5858  ./app.js"
+  },
   "dependencies": {
     "@slack/client": "^3.9.0",
     "@slack/events-api": "^1.0.1",

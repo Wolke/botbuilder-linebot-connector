@@ -34,11 +34,6 @@ bot.dialog('/', [
     },
     function (session, results) {
         session.send('Hello 1 %s!', session.userData.name);
-        session.send('Hello 2 %s!', session.userData.name);
-        session.send('Hello 3 %s!', session.userData.name);
-        session.send('Hello 4 %s!', session.userData.name);
-        session.send('Hello 5 %s!', session.userData.name);
-        session.send('Hello 6 %s!', session.userData.name);
     }
 ]);
 bot.dialog('/profile', [
