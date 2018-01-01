@@ -270,8 +270,14 @@ var LineConnector = /** @class */ (function () {
             replyToken: replyToken,
             messages: m
         };
-        console.log("reply", replyToken, body);
-        return this.post('/message/reply', body).then(function (res) {
+        // console.log("reply", replyToken, body)
+        this.post('/message/reply', body).then(function (res) {
+            res.json().then(function (r) {
+                console.log("r", r);
+                if (r.message) {
+                    throw new Error(r.message);
+                }
+            });
             return res.json();
         });
     };
@@ -281,8 +287,14 @@ var LineConnector = /** @class */ (function () {
             to: toId,
             messages: m
         };
-        console.log("body", body);
-        return this.post('/message/push', body).then(function (res) {
+        // console.log("body", body)
+        this.post('/message/push', body).then(function (res) {
+            res.json().then(function (r) {
+                console.log("r", r);
+                if (r.message) {
+                    throw new Error(r.message);
+                }
+            });
             return res.json();
         });
     };
@@ -290,7 +302,7 @@ var LineConnector = /** @class */ (function () {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
-        console.log("event", event);
+        // console.log("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
@@ -300,8 +312,11 @@ var LineConnector = /** @class */ (function () {
                     };
                 }
                 else if (event.attachments) {
+                    if (event.attachmentLayout === 'carousel') {
+                        //for carousel
+                    }
                     return event.attachments.map(function (a) {
-                        console.log("a", a.contentType, a.content);
+                        console.log("a", a);
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId };
@@ -343,6 +358,61 @@ var LineConnector = /** @class */ (function () {
                                         "previewImageUrl": a.content.image.url
                                     };
                                 }
+                            case 'application/vnd.microsoft.card.hero':
+                                if (!a.content.buttons) {
+                                    return new Error("need buttons data");
+                                }
+                                //confirm?
+                                if (a.images === undefined && a.content.buttons.length === 2) {
+                                    var t = {
+                                        type: "template",
+                                        altText: a.content.text,
+                                        template: {
+                                            type: "confirm",
+                                            title: a.content.title || "",
+                                            text: "" + (a.content.title || "") + (a.content.subtitle || ""),
+                                            actions: a.content.buttons.map(function (b) {
+                                                console.log("b", b);
+                                                if (b.type === 'postBack') {
+                                                    return {
+                                                        "type": "postback",
+                                                        "label": b.title,
+                                                        "data": b.value,
+                                                        "text": "OK"
+                                                    };
+                                                }
+                                                else if (b.type === 'openUrl') {
+                                                    return {
+                                                        "type": "uri",
+                                                        "label": b.title ? b.title : "open url",
+                                                        "uri": b.value
+                                                    };
+                                                }
+                                                else if (b.type === 'datatimepicker') {
+                                                    // console.log("datatimepicker")
+                                                    return {
+                                                        "type": "datetimepicker",
+                                                        "label": b.title,
+                                                        "data": "storeId=12345",
+                                                        "mode": "datetime",
+                                                        "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
+                                                        "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                                                        "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                                                    };
+                                                }
+                                                else {
+                                                    return {
+                                                        "type": "message",
+                                                        "label": b.title,
+                                                        "text": b.value
+                                                    };
+                                                }
+                                            })
+                                        }
+                                    };
+                                    // console.log(t)
+                                    return t;
+                                }
                         }
                     });
                 }
@@ -358,7 +428,7 @@ var LineConnector = /** @class */ (function () {
             }
             else if (_this.replyToken) {
                 var t = _this.getRenderTemplate(e);
-                console.log(t);
+                // console.log(t)
                 if (Array.isArray(t)) {
                     _this.event_cache = _this.event_cache.concat(t);
                 }

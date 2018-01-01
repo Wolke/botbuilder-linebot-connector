@@ -43,7 +43,6 @@ export class Location implements botbuilder.IIsAttachment {
     longitude;
     constructor(session: botbuilder.Session, title: string, address_or_desc: string, latitude: number, longitude: number) {
         this.session = session;
-
         this.title = title;
         this.address = address_or_desc;
         this.latitude = latitude;
@@ -327,9 +326,16 @@ export class LineConnector implements botbuilder.IConnector {
             replyToken: replyToken,
             messages: m
         };
-        console.log("reply", replyToken, body)
+        // console.log("reply", replyToken, body)
 
-        return this.post('/message/reply', body).then(function (res) {
+        this.post('/message/reply', body).then(function (res) {
+            res.json().then(r => {
+                console.log("r", r)
+                if (r.message) {
+                    throw new Error(r.message)
+                }
+
+            })
             return res.json();
         });
     }
@@ -341,8 +347,15 @@ export class LineConnector implements botbuilder.IConnector {
             to: toId,
             messages: m
         };
-        console.log("body", body)
-        return this.post('/message/push', body).then(function (res) {
+        // console.log("body", body)
+        this.post('/message/push', body).then(function (res) {
+            res.json().then(r => {
+                console.log("r", r)
+                if (r.message) {
+                    throw new Error(r.message)
+                }
+
+            })
             return res.json();
         });
     }
@@ -351,7 +364,7 @@ export class LineConnector implements botbuilder.IConnector {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
-        console.log("event", event)
+        // console.log("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
@@ -360,8 +373,12 @@ export class LineConnector implements botbuilder.IConnector {
                         text: event.text
                     }
                 } else if (event.attachments) {
+                    if (event.attachmentLayout === 'carousel') {
+                        //for carousel
+                    }
+
                     return event.attachments.map(a => {
-                        console.log("a", a.contentType, a.content)
+                        console.log("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId }
@@ -406,6 +423,114 @@ export class LineConnector implements botbuilder.IConnector {
                                         "previewImageUrl": a.content.image.url
                                     }
                                 }
+                            case 'application/vnd.microsoft.card.hero':
+
+                                if (!a.content.buttons) {
+                                    return new Error("need buttons data")
+                                }
+                                //confirm?
+                                if (a.images === undefined && a.content.buttons.length === 2) {
+                                    let t = {
+                                        type: "template",
+                                        altText: a.content.text,
+                                        template: {
+                                            type: "confirm",
+                                            title: a.content.title || "",
+                                            text: `${a.content.title || ""}${a.content.subtitle || ""}`,
+
+                                            actions: a.content.buttons.map(b => {
+                                                console.log("b", b)
+                                                if (b.type === 'postBack') {
+                                                    return {
+                                                        "type": "postback",
+                                                        "label": b.title,
+                                                        "data": b.value,
+                                                        "text": "OK"
+                                                    }
+                                                } else if (b.type === 'openUrl') {
+                                                    return {
+                                                        "type": "uri",
+                                                        "label": b.title ? b.title : "open url",
+                                                        "uri": b.value
+                                                    }
+                                                } else if (b.type === 'datatimepicker') {
+                                                    // console.log("datatimepicker")
+                                                    return {
+                                                        "type": "datetimepicker",
+                                                        "label": b.title,
+                                                        "data": "storeId=12345",
+                                                        "mode": "datetime",
+                                                        "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
+
+                                                        "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                                                        "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                                                    }
+
+                                                } else {
+                                                    return {
+                                                        "type": "message",
+                                                        "label": b.title,
+                                                        "text": b.value
+                                                    }
+                                                }
+
+                                            })
+                                        }
+                                    }
+                                    // console.log(t)
+                                    return t
+                                }
+
+                            // let t = {
+                            //     type: "template",
+                            //     altText: a.text || "",
+                            //     template: {
+                            //         type: "buttons",
+                            //         title: a.title || "",
+                            //         text: a.subtitle || "",
+                            //     }
+                            // }
+                            // if (a.images) {
+
+                            // }
+                            // return t;
+
+                            //butions or image buttons
+                            // if (a.content.image && a.content.image.url.indexOf("https") > -1) {
+                            // return {
+                            //     "type": "template",
+                            //     "altText": "This is a buttons template",
+                            //     "template": {
+                            //         "type": "buttons",
+                            //         "thumbnailImageUrl": a.content.images[0].url,
+                            //         "imageAspectRatio": "rectangle",
+                            //         "imageSize": "cover",
+                            //         "imageBackgroundColor": "#FFFFFF",
+                            //         "title": "Menu",
+                            //         "text": "Please select",
+                            //         "actions": [
+                            //             {
+                            //                 "type": "postback",
+                            //                 "label": "Buy",
+                            //                 "data": "action=buy&itemid=123"
+                            //             },
+                            //             {
+                            //                 "type": "postback",
+                            //                 "label": "Add to cart",
+                            //                 "data": "action=add&itemid=123"
+                            //             },
+                            //             {
+                            //                 "type": "uri",
+                            //                 "label": "View detail",
+                            //                 "uri": "http://example.com/page/123"
+                            //             }
+                            //         ]
+                            //     }
+                            // }
+                            // }
+                            //Confirm
+
+
 
 
                         }
@@ -425,7 +550,7 @@ export class LineConnector implements botbuilder.IConnector {
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
                 let t = _this.getRenderTemplate(e)
-                console.log(t)
+                // console.log(t)
                 if (Array.isArray(t)) {
                     _this.event_cache = _this.event_cache.concat(t)
                 } else {
