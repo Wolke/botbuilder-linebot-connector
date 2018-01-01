@@ -5,6 +5,69 @@ var url = require('url');
 
 import bodyParser = require("body-parser");
 import * as botbuilder from "botbuilder";
+
+export class Sticker implements botbuilder.IIsAttachment {
+    packageId;
+    stickerId;
+    session;
+    constructor(session: botbuilder.Session, packageId: number, stickerId: number) {
+        this.packageId = packageId.toString();
+        this.stickerId = stickerId.toString();
+        this.session = session;
+    }
+    toAttachment(): botbuilder.IAttachment {
+        // throw new Error("Method not implemented.");
+        // console.log(this.session.message)
+        if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+            return {
+                contentType: "sticker",
+                content: {
+                    packageId: this.packageId,
+                    stickerId: this.stickerId
+                }
+            }
+        } else {
+            // throw new Error("Method not implemented.");
+
+            return new botbuilder.MediaCard().text("this is a sticker!!").toAttachment()
+        }
+
+    }
+}
+
+export class Location implements botbuilder.IIsAttachment {
+    session;
+    title;
+    address;
+    latitude;
+    longitude;
+    constructor(session: botbuilder.Session, title: string, address_or_desc: string, latitude: number, longitude: number) {
+        this.session = session;
+
+        this.title = title;
+        this.address = address_or_desc;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    toAttachment(): botbuilder.IAttachment {
+        if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+            return {
+                contentType: "location",
+                content: {
+                    title: this.title,
+                    address: this.address,
+                    latitude: this.latitude,
+                    longitude: this.longitude
+                }
+            }
+        } else {
+            // throw new Error("Method not implemented.");
+
+            return new botbuilder.MediaCard().text(`this is a location!! ${this.address}`).toAttachment()
+        }
+    }
+}
+
 export class LineConnector implements botbuilder.IConnector {
     //const
     headers;
@@ -97,6 +160,7 @@ export class LineConnector implements botbuilder.IConnector {
 
             let m: any = {
                 timestamp: new Date(parseInt(event.timestamp)).toISOString(),
+                source: "line",
                 address: {
                     conversation: {},
                     channel: {},
@@ -287,6 +351,7 @@ export class LineConnector implements botbuilder.IConnector {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
+        console.log("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
@@ -294,6 +359,59 @@ export class LineConnector implements botbuilder.IConnector {
                         type: 'text',
                         text: event.text
                     }
+                } else if (event.attachments) {
+                    return event.attachments.map(a => {
+                        console.log("a", a.contentType, a.content)
+                        switch (a.contentType) {
+                            case 'sticker':
+                                return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId }
+
+                            case 'location':
+                                return {
+                                    type: 'location',
+                                    title: a.content.title,
+                                    address: a.content.address,
+
+                                    latitude: a.content.latitude,
+                                    longitude: a.content.longitude
+
+                                }
+
+
+                            case 'application/vnd.microsoft.card.video':
+                                if (a.content.image && a.content.media && a.content.media[0].url.indexOf("https") > -1 && a.content.image.url.indexOf("https") > -1) {
+                                    return {
+                                        "type": "video",
+                                        "originalContentUrl": a.content.media[0].url,
+                                        "previewImageUrl": a.content.image.url
+                                    }
+                                } else {
+                                    return new Error("need image and media")
+                                }
+                            case 'application/vnd.microsoft.card.audio':
+                                if (a.content.media && a.content.media[0].url.indexOf("https") > -1) {
+                                    return {
+                                        "type": "audio",
+                                        "originalContentUrl": a.content.media[0].url,
+                                        "duration": 240000
+                                    }
+                                } else {
+                                    return new Error("need image and media")
+                                }
+                            case 'application/vnd.microsoft.keyboard':
+                                if (a.content.image && a.content.image.url.indexOf("https") > -1) {
+                                    return {
+                                        "type": "image",
+                                        "originalContentUrl": a.content.image.url,
+                                        "previewImageUrl": a.content.image.url
+                                    }
+                                }
+
+
+                        }
+                    })
+
+
                 }
         }
     }
@@ -302,18 +420,24 @@ export class LineConnector implements botbuilder.IConnector {
         const _this = this;
 
         messages.map(e => {
-            // console.log("e", e)
+            console.log("e", e)
             if (_this.hasPushApi) {
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
-                _this.event_cache.push(_this.getRenderTemplate(e))
+                let t = _this.getRenderTemplate(e)
+                console.log(t)
+                if (Array.isArray(t)) {
+                    _this.event_cache = _this.event_cache.concat(t)
+                } else {
+                    _this.event_cache.push(t)
+                }
                 if (_this.event_cache.length === 5) {
                     _this.reply(_this.replyToken, _this.event_cache);
                     _this.replyToken = null;
                     _this.event_cache = [];
                 }
             } else {
-                throw `no way to send message: ` + e
+                throw new Error(`no way to send message: ` + e);
             }
         })
     }
