@@ -83,51 +83,60 @@ bot.dialog('/', [
         //     .text('The Empire Strikes Back (also known as Star Wars: Episode V – The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.')
         //     .image(builder.CardImage.create(s, 'https://s.yimg.com/ny/api/res/1.2/bSlNYXoNEDzFGweVwgR4lA--/YXBwaWQ9aGlnaGxhbmRlcjtzbT0xO3c9ODAw/http://media.zenfs.com/zh-Hant-TW/homerun/mirrormedia.mg/df4ea57c8bc14ff4c1817ef04a2a7b49'))
         // ))
-        s.send(new builder.Message(s)
-            // .addAttachment(
-            // new Sticker(s, 1, 1)
-            // )
-            // .addAttachment(
-            // new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
-            // )
-            .addAttachment(
-            new builder.HeroCard(s)
-                .title("Classic White T-Shirt")
-                .subtitle("100% Soft and Luxurious Cotton")
-                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
-                .buttons([
-                    // builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
-                    new CardAction().type("datatimepicker").title("time"),
-
-                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
-                    builder.CardAction.openUrl(s, "https://1797.tw", "1797")
-
-                ])
-            )
-
-        )
-
-        // var msg = new builder.Message(s);
-        // msg.attachmentLayout(builder.AttachmentLayout.carousel)
-        // msg.attachments([
+        // s.send(new builder.Message(s)
+        //     // .addAttachment(
+        //     // new Sticker(s, 1, 1)
+        //     // )
+        //     // .addAttachment(
+        //     // new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
+        //     // )
+        //     .addAttachment(
         //     new builder.HeroCard(s)
+
         //         .title("Classic White T-Shirt")
         //         .subtitle("100% Soft and Luxurious Cotton")
         //         .text("Price is $25 and carried in sizes (S, M, L, and XL)")
         //         .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+
         //         .buttons([
-        //             builder.CardAction.imBack(s, "buy classic white t-shirt", "Buy")
-        //         ]),
-        //     new builder.HeroCard(s)
-        //         .title("Classic Gray T-Shirt")
-        //         .subtitle("100% Soft and Luxurious Cotton")
-        //         .text("Price is $25 and carried in sizes (S, M, L, and XL)")
-        //         .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
-        //         .buttons([
-        //             builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy")
+        //             builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+        //             new CardAction().type("datatimepicker").title("time"),
+
+        //             builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+        //             builder.CardAction.openUrl(s, "https://1797.tw", "1797")
+
         //         ])
-        // ]);
-        // s.send(msg)
+        //     )
+
+        // )
+
+        var msg = new builder.Message(s);
+        msg.attachmentLayout(builder.AttachmentLayout.carousel)
+        msg.attachments([
+
+            new builder.HeroCard(s)
+                .title("Classic White T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+                .buttons([
+                    builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+                    new CardAction().type("datatimepicker").title("time"),
+                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+             
+                ]),
+            new builder.HeroCard(s)
+                .title("Classic Gray T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
+                .buttons([
+                    new CardAction().type("datatimepicker").title("time"),
+                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                ])
+        ]);
+        s.send(msg)
     }
 ]);
 

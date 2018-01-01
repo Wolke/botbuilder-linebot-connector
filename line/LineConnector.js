@@ -312,8 +312,103 @@ var LineConnector = /** @class */ (function () {
                     };
                 }
                 else if (event.attachments) {
+                    var getButtonTemp_1 = function (b) {
+                        if (b.type === 'postBack') {
+                            return {
+                                "type": "postback",
+                                "label": b.title,
+                                "data": b.value,
+                                "text": "OK"
+                            };
+                        }
+                        else if (b.type === 'openUrl') {
+                            return {
+                                "type": "uri",
+                                "label": b.title ? b.title : "open url",
+                                "uri": b.value
+                            };
+                        }
+                        else if (b.type === 'datatimepicker') {
+                            // console.log("datatimepicker")
+                            return {
+                                "type": "datetimepicker",
+                                "label": b.title,
+                                "data": "storeId=12345",
+                                "mode": "datetime",
+                                "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
+                                "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                                "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                            };
+                        }
+                        else {
+                            return {
+                                "type": "message",
+                                "label": b.title,
+                                "text": b.value
+                            };
+                        }
+                    };
+                    var getAltText_1 = function (s) {
+                        return s.substring(0, 400);
+                    };
                     if (event.attachmentLayout === 'carousel') {
                         //for carousel
+                        //for image carousel
+                        var be_same = event.attachments.reduce(function (c, n) {
+                            return c.contentType === n.contentType;
+                        });
+                        if (!be_same) {
+                            throw new Error("must be same attachment");
+                        }
+                        if (event.attachments[0].contentType === "application/vnd.microsoft.card.hero") {
+                            var be_image_carousel = event.attachments.reduce(function (c, n) {
+                                return c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1;
+                            });
+                            if (be_image_carousel) {
+                                return {
+                                    "type": "template",
+                                    "altText": getAltText_1(event.attachments[0].content.text),
+                                    "template": {
+                                        "type": "image_carousel",
+                                        "columns": event.attachments.map(function (a) {
+                                            return {
+                                                imageUrl: a.content.images[0].url,
+                                                action: getButtonTemp_1(a.content.buttons[0])
+                                            };
+                                        })
+                                    }
+                                };
+                            }
+                            else {
+                                var t = {
+                                    type: "template",
+                                    altText: getAltText_1(event.attachments[0].content.text),
+                                    template: {
+                                        type: "carousel",
+                                        imageAspectRatio: "rectangle",
+                                        imageSize: "cover",
+                                        columns: event.attachments.map(function (a) {
+                                            var c = {
+                                                title: a.content.title || "",
+                                                text: "" + (a.content.title || "") + (a.content.subtitle || ""),
+                                                actions: a.content.buttons.map(function (b) {
+                                                    return getButtonTemp_1(b);
+                                                })
+                                            };
+                                            if (a.content.images) {
+                                                c.thumbnailImageUrl = a.content.images[0].url;
+                                                c.imageBackgroundColor = "#FFFFFF";
+                                            }
+                                            return c;
+                                        })
+                                    }
+                                };
+                                return t;
+                            }
+                        }
+                        else {
+                            throw new Error("do not suppoert this card,only support HeroCard ");
+                        }
                     }
                     return event.attachments.map(function (a) {
                         console.log("a", a);
@@ -362,55 +457,40 @@ var LineConnector = /** @class */ (function () {
                                 if (!a.content.buttons) {
                                     return new Error("need buttons data");
                                 }
-                                //confirm?
-                                if (a.images === undefined && a.content.buttons.length === 2) {
-                                    var t = {
+                                if (a.content.images === undefined && a.content.buttons.length === 2) {
+                                    //confirm
+                                    return {
                                         type: "template",
-                                        altText: a.content.text,
+                                        altText: getAltText_1(a.content.text),
                                         template: {
                                             type: "confirm",
                                             title: a.content.title || "",
                                             text: "" + (a.content.title || "") + (a.content.subtitle || ""),
                                             actions: a.content.buttons.map(function (b) {
-                                                console.log("b", b);
-                                                if (b.type === 'postBack') {
-                                                    return {
-                                                        "type": "postback",
-                                                        "label": b.title,
-                                                        "data": b.value,
-                                                        "text": "OK"
-                                                    };
-                                                }
-                                                else if (b.type === 'openUrl') {
-                                                    return {
-                                                        "type": "uri",
-                                                        "label": b.title ? b.title : "open url",
-                                                        "uri": b.value
-                                                    };
-                                                }
-                                                else if (b.type === 'datatimepicker') {
-                                                    // console.log("datatimepicker")
-                                                    return {
-                                                        "type": "datetimepicker",
-                                                        "label": b.title,
-                                                        "data": "storeId=12345",
-                                                        "mode": "datetime",
-                                                        "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
-                                                        "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
-                                                        "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
-                                                    };
-                                                }
-                                                else {
-                                                    return {
-                                                        "type": "message",
-                                                        "label": b.title,
-                                                        "text": b.value
-                                                    };
-                                                }
+                                                return getButtonTemp_1(b);
                                             })
                                         }
                                     };
-                                    // console.log(t)
+                                }
+                                else {
+                                    var t = {
+                                        type: "template",
+                                        altText: a.content.text,
+                                        template: {
+                                            type: "buttons",
+                                            title: a.content.title || "",
+                                            text: "" + (a.content.title || "") + (a.content.subtitle || ""),
+                                            actions: a.content.buttons.map(function (b) {
+                                                return getButtonTemp_1(b);
+                                            })
+                                        }
+                                    };
+                                    if (a.content.images) {
+                                        t.template.thumbnailImageUrl = a.content.images[0].url;
+                                        t.template.imageAspectRatio = "rectangle";
+                                        t.template.imageSize = "cover";
+                                        t.template.imageBackgroundColor = "#FFFFFF";
+                                    }
                                     return t;
                                 }
                         }
