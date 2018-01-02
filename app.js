@@ -124,7 +124,7 @@ bot.dialog('leave', function (s) {
     matches: /^leave$/i
 });
 bot.on('conversationUpdate', function (message) {
-    console.log("conversationUpdate", message);
+    // console.log("conversationUpdate", message)
     switch (message.text) {
         case 'follow':
             break;
@@ -141,5 +141,15 @@ bot.on('conversationUpdate', function (message) {
         .address(message.address)
         .text(txt);
     bot.send(reply);
+    bot.beginDialog(message.address, "hello");
 });
+bot.dialog("hello", [
+    function (s) {
+        builder.Prompts.text(s, "go");
+    },
+    function (s, r) {
+        s.send("oh!" + r.response);
+        s.endDialog();
+    }
+]);
 //# sourceMappingURL=app.js.map

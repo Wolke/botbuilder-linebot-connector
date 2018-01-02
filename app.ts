@@ -2,7 +2,6 @@ var express = require('express');
 import * as builder from "botbuilder";
 import * as  istorage from "./lib/IStorageClient";
 import * as  azure from './lib/AzureBotStorage.js';
-import * as  conf from './config/conf.js'
 import { LineConnector, Sticker, Location } from "./line/LineConnector"
 import { CardAction } from "botbuilder";
 var server = express();
@@ -16,7 +15,7 @@ var tableStorage = new azure.AzureBotStorage({
 }, docDbClient);
 
 var connector = new LineConnector({
-    hasPushApi: false, //should
+    hasPushApi: false, //you to pay for push api >.,<
     // Miss Tarot 塔羅小姐
     channelId: process.env.channelId || "1487202031",
     channelSecret: process.env.channelSecret || "64078989ba8249519163b052eca6bc58",
@@ -30,7 +29,6 @@ var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //se
 
 bot.dialog('/', [
     s => {
-
         let m = new builder.Message(s)
             .text("hello world")
             .suggestedActions(
@@ -115,7 +113,7 @@ bot.dialog('leave'
 });
 
 bot.on('conversationUpdate', function (message) {
-    console.log("conversationUpdate", message)
+    // console.log("conversationUpdate", message)
     switch (message.text) {
         case 'follow':
             break;
@@ -132,5 +130,15 @@ bot.on('conversationUpdate', function (message) {
         .address(message.address)
         .text(txt);
     bot.send(reply);
-
+    bot.beginDialog(message.address, "hello")
 });
+
+bot.dialog("hello", [
+    s => {
+        builder.Prompts.text(s, "go");
+    },
+    (s, r) => {
+        s.send("oh!" + r.response)
+        s.endDialog()
+    }
+])

@@ -289,11 +289,12 @@ export class LineConnector implements botbuilder.IConnector {
                     break;
                 case 'postback':
 
+                    m.type = 'message'
                     let data = event.postback.data;
                     if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
                         data += `(${JSON.stringify(event.postback.params)})`;
                     }
-                    m.text = ""
+                    m.text = data
                     break;
                 case 'beacon':
                     break;
@@ -445,7 +446,7 @@ export class LineConnector implements botbuilder.IConnector {
                     "type": "postback",
                     "label": b.title,
                     "data": b.value,
-                    "text": "OK"
+                    // "text": "OK"
                 }
             } else if (b.type === 'openUrl') {
                 return {
@@ -475,28 +476,28 @@ export class LineConnector implements botbuilder.IConnector {
         let getAltText = s => {
             return s.substring(0, 400)
         }
-        console.log("event", event)
+        // console.log("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
                     if (event.suggestedActions && event.suggestedActions.actions && event.suggestedActions.actions.length > 0) {
                         let l = event.suggestedActions.actions.length;
                         switch (l) {
-                            case 2:
-                                //confirm
+                            // case 2:
+                            //     //confirm
 
-                                return {
-                                    type: "template",
-                                    altText: getAltText(event.text),
-                                    template: {
-                                        type: "confirm",
-                                        // title: event.text || "",
-                                        text: `${event.text || ""}`,
-                                        actions: event.suggestedActions.actions.map(b =>
-                                            getButtonTemp(b)
-                                        )
-                                    }
-                                }
+                            //     return {
+                            //         type: "template",
+                            //         altText: getAltText(event.text),
+                            //         template: {
+                            //             type: "confirm",
+                            //             // title: event.text || "",
+                            //             text: `${event.text || ""}`,
+                            //             actions: event.suggestedActions.actions.map(b =>
+                            //                 getButtonTemp(b)
+                            //             )
+                            //         }
+                            //     }
 
                             default:
                                 return {
@@ -515,6 +516,7 @@ export class LineConnector implements botbuilder.IConnector {
 
                         }
                     }
+
                     return {
                         type: 'text',
                         text: event.text
