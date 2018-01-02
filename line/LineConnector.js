@@ -263,20 +263,22 @@ var LineConnector = /** @class */ (function () {
                             case 'follow':
                                 m.id = event.source.userId;
                                 m.type = 'conversationUpdate';
-                                m.text = "";
+                                m.text = "follow";
                                 break;
                             case 'unfollow':
                                 m.id = event.source.userId;
                                 m.type = 'conversationUpdate';
-                                m.text = "";
+                                m.text = "unfollow";
                                 break;
                             case 'join':
+                                m.membersAdded = [{}];
                                 m.type = 'conversationUpdate';
-                                m.text = "";
+                                m.text = "join";
                                 break;
                             case 'leave':
+                                m.membersRemoved = true;
                                 m.type = 'conversationUpdate';
-                                m.text = "";
+                                m.text = "leave";
                                 break;
                             case 'postback':
                                 data = event.postback.data;

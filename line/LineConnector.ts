@@ -107,7 +107,7 @@ export class LineConnector implements botbuilder.IConnector {
         this.endpoint = 'https://api.line.me/v2/bot';
         this.botId = options.channelId;
     }
-    verify(rawBody, signature) {
+    private verify(rawBody, signature) {
         const hash = crypto.createHmac('sha256', this.options.channelSecret)
             .update(rawBody, 'utf8')
             .digest('base64');
@@ -133,7 +133,7 @@ export class LineConnector implements botbuilder.IConnector {
         };
     }
 
-    addReplyToken(replyToken) {
+    private addReplyToken(replyToken) {
 
         const _this = this;
         _this.replyToken = replyToken;
@@ -149,7 +149,7 @@ export class LineConnector implements botbuilder.IConnector {
 
         }, 1000)
     }
-    dispatch(body, res) {
+    private dispatch(body, res) {
         // console.log("dispatch")
         const _this = this;
         if (!body || !body.events) {
@@ -266,24 +266,26 @@ export class LineConnector implements botbuilder.IConnector {
                     m.id = event.source.userId;
 
                     m.type = 'conversationUpdate'
-                    m.text = ""
+                    m.text = "follow"
                     break;
 
                 case 'unfollow':
 
                     m.id = event.source.userId;
                     m.type = 'conversationUpdate'
-                    m.text = ""
+                    m.text = "unfollow"
                     break;
 
                 case 'join':
+                    m.membersAdded = [{}]
                     m.type = 'conversationUpdate'
-                    m.text = ""
+                    m.text = "join"
                     break;
 
                 case 'leave':
+                    m.membersRemoved = true
                     m.type = 'conversationUpdate'
-                    m.text = ""
+                    m.text = "leave"
                     break;
                 case 'postback':
 
@@ -308,7 +310,7 @@ export class LineConnector implements botbuilder.IConnector {
     onEvent(handler) {
         this.handler = handler;
     };
-    static createMessages(message) {
+    private static createMessages(message) {
         // console.log(message)
         if (typeof message === 'string') {
             return [{ type: 'text', text: message }];
@@ -324,7 +326,7 @@ export class LineConnector implements botbuilder.IConnector {
         }
         return [message];
     }
-    post(path, body) {
+    private post(path, body) {
         // console.log(path, body)
         // let r;
         // try {
@@ -334,11 +336,11 @@ export class LineConnector implements botbuilder.IConnector {
         // }
         return fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
     }
-    get(path) {
+    private get(path) {
         // console.log("get", path);
         return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
     }
-    async reply(replyToken, message) {
+    private async reply(replyToken, message) {
         // console.log("reply")
 
         let m = LineConnector.createMessages(message);
@@ -355,7 +357,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    async push(toId, message) {
+    private async push(toId, message) {
         let m = LineConnector.createMessages(message);
 
         const body = {
@@ -371,7 +373,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    async getUserProfile(userId) {
+    private async getUserProfile(userId) {
         let url = '/profile/' + userId;
         // return url
         let res = await this.get(url).then()
@@ -382,7 +384,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    async getMemberIDs() {
+    private async getMemberIDs() {
         if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
@@ -398,7 +400,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    async getMemberRrofile(userId) {
+    private async getMemberRrofile(userId) {
         if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
@@ -433,7 +435,7 @@ export class LineConnector implements botbuilder.IConnector {
     }
 
 
-    getRenderTemplate(event) {
+    private getRenderTemplate(event) {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
