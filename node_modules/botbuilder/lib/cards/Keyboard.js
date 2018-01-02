@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Keyboard = (function () {
     function Keyboard(session) {
         this.session = session;

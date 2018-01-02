@@ -1,4 +1,16 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var IntentRecognizer_1 = require("./IntentRecognizer");
 var utils = require("../utils");
 var async = require("async");
 var RecognizeOrder;
@@ -6,33 +18,36 @@ var RecognizeOrder;
     RecognizeOrder[RecognizeOrder["parallel"] = 0] = "parallel";
     RecognizeOrder[RecognizeOrder["series"] = 1] = "series";
 })(RecognizeOrder = exports.RecognizeOrder || (exports.RecognizeOrder = {}));
-var IntentRecognizerSet = (function () {
+var IntentRecognizerSet = (function (_super) {
+    __extends(IntentRecognizerSet, _super);
     function IntentRecognizerSet(options) {
         if (options === void 0) { options = {}; }
-        this.options = options;
-        if (typeof this.options.intentThreshold !== 'number') {
-            this.options.intentThreshold = 0.1;
+        var _this = _super.call(this) || this;
+        _this.options = options;
+        if (typeof _this.options.intentThreshold !== 'number') {
+            _this.options.intentThreshold = 0.1;
         }
-        if (!this.options.hasOwnProperty('recognizeOrder')) {
-            this.options.recognizeOrder = RecognizeOrder.parallel;
+        if (!_this.options.hasOwnProperty('recognizeOrder')) {
+            _this.options.recognizeOrder = RecognizeOrder.parallel;
         }
-        if (!this.options.recognizers) {
-            this.options.recognizers = [];
+        if (!_this.options.recognizers) {
+            _this.options.recognizers = [];
         }
-        if (!this.options.processLimit) {
-            this.options.processLimit = 4;
+        if (!_this.options.processLimit) {
+            _this.options.processLimit = 4;
         }
-        if (!this.options.hasOwnProperty('stopIfExactMatch')) {
-            this.options.stopIfExactMatch = true;
+        if (!_this.options.hasOwnProperty('stopIfExactMatch')) {
+            _this.options.stopIfExactMatch = true;
         }
-        this.length = this.options.recognizers.length;
+        _this.length = _this.options.recognizers.length;
+        return _this;
     }
     IntentRecognizerSet.prototype.clone = function (copyTo) {
         var obj = copyTo || new IntentRecognizerSet(utils.clone(this.options));
         obj.options.recognizers = this.options.recognizers.slice(0);
         return obj;
     };
-    IntentRecognizerSet.prototype.recognize = function (context, done) {
+    IntentRecognizerSet.prototype.onRecognize = function (context, done) {
         if (this.options.recognizeOrder == RecognizeOrder.parallel) {
             this.recognizeInParallel(context, done);
         }
@@ -99,5 +114,5 @@ var IntentRecognizerSet = (function () {
         });
     };
     return IntentRecognizerSet;
-}());
+}(IntentRecognizer_1.IntentRecognizer));
 exports.IntentRecognizerSet = IntentRecognizerSet;

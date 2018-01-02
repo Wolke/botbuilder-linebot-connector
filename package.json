@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "description": "line botframework builder",
   "scripts": {
-    "dev":"tsc --watch & nodemon  ./app.js",
-  
-    "dev2":"tsc --watch & nodemon --inspect-brk=5858  ./app.js"
+    "dev": "tsc --watch & nodemon  ./app.js",
+    "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./app.js"
   },
   "dependencies": {
     "@slack/client": "^3.9.0",
@@ -14,7 +13,7 @@
     "array-intersection": "^0.1.2",
     "async": "^2.1.4",
     "azure-storage": "^2.6.0",
-    "botbuilder": "^3.5.4",
+    "botbuilder": "^3.13.1",
     "dotenv": "^4.0.0",
     "fetch": "^1.1.0",
     "lodash": "^4.17.4",

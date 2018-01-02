@@ -150,7 +150,7 @@ export class LineConnector implements botbuilder.IConnector {
         }, 1000)
     }
     dispatch(body, res) {
-        console.log("dispatch")
+        // console.log("dispatch")
         const _this = this;
         if (!body || !body.events) {
             return;
@@ -383,7 +383,7 @@ export class LineConnector implements botbuilder.IConnector {
     }
 
     async getMemberIDs() {
-        if (this.conversationType===undefined) {
+        if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
         }
@@ -398,8 +398,8 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    async getMemberRrofile( userId) {
-        if (this.conversationType===undefined) {
+    async getMemberRrofile(userId) {
+        if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
         }
@@ -412,14 +412,14 @@ export class LineConnector implements botbuilder.IConnector {
         }
         return r;
     }
-    
+
     async leave() {
-        if(this.conversationType===undefined) {
+        if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
         }
         let url = `/${this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : ""}/${this.conversationId}/leave`
-      
+
         const body = {
             replyToken: this.replyToken,
         };
@@ -437,51 +437,88 @@ export class LineConnector implements botbuilder.IConnector {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
-        // console.log("event", event)
+        let getButtonTemp = b => {
+            if (b.type === 'postBack') {
+                return {
+                    "type": "postback",
+                    "label": b.title,
+                    "data": b.value,
+                    "text": "OK"
+                }
+            } else if (b.type === 'openUrl') {
+                return {
+                    "type": "uri",
+                    "label": b.title ? b.title : "open url",
+                    "uri": b.value
+                }
+            } else if (b.type === 'datatimepicker') {
+                // console.log("datatimepicker")
+                return {
+                    "type": "datetimepicker",
+                    "label": b.title,
+                    "data": "storeId=12345",
+                    "mode": "datetime",
+                    "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
+                    "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                    "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
+                }
+            } else {
+                return {
+                    "type": "message",
+                    "label": b.title,
+                    "text": b.value
+                }
+            }
+        }
+        let getAltText = s => {
+            return s.substring(0, 400)
+        }
+        console.log("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
+                    if (event.suggestedActions && event.suggestedActions.actions && event.suggestedActions.actions.length > 0) {
+                        let l = event.suggestedActions.actions.length;
+                        switch (l) {
+                            case 2:
+                                //confirm
+
+                                return {
+                                    type: "template",
+                                    altText: getAltText(event.text),
+                                    template: {
+                                        type: "confirm",
+                                        // title: event.text || "",
+                                        text: `${event.text || ""}`,
+                                        actions: event.suggestedActions.actions.map(b =>
+                                            getButtonTemp(b)
+                                        )
+                                    }
+                                }
+
+                            default:
+                                return {
+                                    type: "template",
+                                    altText: getAltText(event.text),
+                                    template: {
+                                        type: "buttons",
+                                        // title: event.text || "",
+                                        text: `${event.text || ""}`,
+                                        actions: event.suggestedActions.actions.map(b =>
+                                            getButtonTemp(b)
+                                        )
+                                    }
+                                }
+
+
+                        }
+                    }
                     return {
                         type: 'text',
                         text: event.text
                     }
                 } else if (event.attachments) {
-                    let getButtonTemp = b => {
-                        if (b.type === 'postBack') {
-                            return {
-                                "type": "postback",
-                                "label": b.title,
-                                "data": b.value,
-                                "text": "OK"
-                            }
-                        } else if (b.type === 'openUrl') {
-                            return {
-                                "type": "uri",
-                                "label": b.title ? b.title : "open url",
-                                "uri": b.value
-                            }
-                        } else if (b.type === 'datatimepicker') {
-                            // console.log("datatimepicker")
-                            return {
-                                "type": "datetimepicker",
-                                "label": b.title,
-                                "data": "storeId=12345",
-                                "mode": "datetime",
-                                "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
-                                "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
-                                "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
-                            }
-                        } else {
-                            return {
-                                "type": "message",
-                                "label": b.title,
-                                "text": b.value
-                            }
-                        }
-                    }
-                    let getAltText = s => {
-                        return s.substring(0, 400)
-                    }
+
                     if (event.attachmentLayout === 'carousel') {
                         //for carousel
                         //for image carousel

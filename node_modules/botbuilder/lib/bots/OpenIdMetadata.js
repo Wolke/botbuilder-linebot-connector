@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var logger = require("../logger");
 var request = require("request");
 var getPem = require('rsa-pem-from-mod-exp');
@@ -71,7 +72,7 @@ var OpenIdMetadata = (function () {
                 }
                 var modulus = base64url.toBase64(key.n);
                 var exponent = key.e;
-                return getPem(modulus, exponent);
+                return { key: getPem(modulus, exponent), endorsements: key.endorsements };
             }
         }
         return null;

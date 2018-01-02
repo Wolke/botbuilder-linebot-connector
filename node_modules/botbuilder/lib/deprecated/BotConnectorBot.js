@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var UniversalBot_1 = require("../bots/UniversalBot");
 var ChatConnector_1 = require("../bots/ChatConnector");
 var BotConnectorBot = (function () {

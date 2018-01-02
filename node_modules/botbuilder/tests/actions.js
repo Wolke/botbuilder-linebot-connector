@@ -64,6 +64,7 @@ describe('actions', function() {
             onSelectAction: function (session, args, next) {
                 assert(session !== null);
                 assert(args !== null);
+                assert(args.action === '*:/');
                 assert(next !== null);
                 done();
             }
@@ -167,16 +168,18 @@ describe('actions', function() {
             builder.Prompts.text(session, "ChooseFood");
         }).endConversationAction('quit', "goodbye", { matches: /goodbye/i });
         bot.on('send', function (message) {
-            switch (message.text) {
-                case 'ChooseFood':
-                    connector.processMessage("goodbye");
-                    break;
-                case 'goodbye':
-                    done();
-                    break;
-                default:
-                    assert(false);
-                    break;
+            if (message.text) {
+                switch (message.text) {
+                    case 'ChooseFood':
+                        connector.processMessage("goodbye");
+                        break;
+                    case 'goodbye':
+                        done();
+                        break;
+                    default:
+                        assert(false);
+                        break;
+                }
             }
         });
         connector.processMessage('test');

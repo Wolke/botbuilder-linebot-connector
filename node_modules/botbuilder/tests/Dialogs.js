@@ -104,7 +104,66 @@ describe('dialogs', function () {
         bot.dialog('/', function (session) {
             session.beginDialog("/intentDialog");
         });
-
         connector.processMessage("test");
-    })
+    });
+    
+    it('should process a waterfall of text prompts with maxLength and minLength requirements', function (done) {
+        var step = 0;
+        var connector = new builder.ConsoleConnector();       
+        var bot = new builder.UniversalBot(connector);
+        bot.dialog('/', [
+            function (session, results) {
+                assert(session.message.text == 'start');
+                builder.Prompts.text(session, 'enter at least 3 characters', { minLength: 3 });
+            },
+            function (session, results) {
+                assert(session.message.text == 'three');
+                builder.Prompts.text(session, 'enter at less than 7 characters', { maxLength: 7 });    
+            },
+            function (session, results) {
+                assert(session.message.text == 'seven');
+                builder.Prompts.text(session, 'do not enter more than 7 characters', { maxLength: 7 });    
+            },
+            function (session, results) {
+                assert(session.message.text == 'seven');
+                builder.Prompts.text(session, 'do not enter less than 3 characters', { minLength: 3 });  
+            },
+            function (session, results) {
+                assert(session.message.text == 'two');
+                session.send('done');
+            }
+        ]);
+        bot.on('send', function (message) {
+            switch (++step) {
+                case 1:
+                    assert(message.text == 'enter at least 3 characters');
+                    connector.processMessage('three');
+                    break;
+                case 2:
+                    connector.processMessage('seven');
+                    break;
+                case 3:
+                    connector.processMessage('seven characters');
+                    break;
+                case 4:
+                    var re = /The text you entered was above the maximum allowed length of 7\. Please enter a valid text\./
+                    assert(re.test(message.text))
+                    connector.processMessage('seven');
+                    break;
+                case 5:
+                    connector.processMessage('2');
+                    break;
+                case 6:
+                    var re = /The text you entered was below the minimum allowed length of 3\. Please enter a valid text\./
+                    assert(re.test(message.text))
+                    connector.processMessage('two');
+                    break;
+                case 7:
+                    assert(message.text == 'done');
+                    done();
+                    break;
+            }
+        });
+        connector.processMessage('start');
+    });
 });

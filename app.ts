@@ -43,41 +43,55 @@ var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //se
 
 bot.dialog('/', [
     s => {
-        s.send("hi")
-        var msg = new builder.Message(s);
-        msg.attachmentLayout(builder.AttachmentLayout.carousel)
-        msg.attachments([
 
-            new builder.HeroCard(s)
-                .title("Classic White T-Shirt")
-                .subtitle("100% Soft and Luxurious Cotton")
-                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
-                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
-                .buttons([
-                    builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+        s.send("hi")
+        let m = new builder.Message(s)
+            .text("hello world")
+            .suggestedActions(
+            builder.SuggestedActions.create(
+                s, [
                     new CardAction().type("datatimepicker").title("time"),
-                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
-                ]),
-            new builder.HeroCard(s)
-                .title("Classic Gray T-Shirt")
-                .subtitle("100% Soft and Luxurious Cotton")
-                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
-                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
-                .buttons([
-                    new CardAction().type("datatimepicker").title("time"),
-                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
-                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
-                ])
-        ]);
-        try {
-            builder.Prompts.text(s, msg);
-        } catch (e) {
-            console.log(e)
-        }
+                    new builder.CardAction().title("1").type("message").value("1"),
+                    // builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data")
+               
+                ]
+            ));
+        s.send(m)
+        // var msg = new builder.Message(s);
+        // msg.attachmentLayout(builder.AttachmentLayout.carousel)
+        // msg.attachments([
+
+        //     new builder.HeroCard(s)
+        //         .title("Classic White T-Shirt")
+        //         .subtitle("100% Soft and Luxurious Cotton")
+        //         .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+        //         .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+        //         .buttons([
+        //             builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+        //             new CardAction().type("datatimepicker").title("time"),
+        //             builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+        //         ]),
+        //     new builder.HeroCard(s)
+        //         .title("Classic Gray T-Shirt")
+        //         .subtitle("100% Soft and Luxurious Cotton")
+        //         .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+        //         .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
+        //         .buttons([
+        //             new CardAction().type("datatimepicker").title("time"),
+        //             builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+        //             builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+        //         ])
+        // ]);
+        // try {
+        //     builder.Prompts.text(s, msg);
+        // } catch (e) {
+        //     console.log(e)
+        // }
     },
-    async (s, r) => {
-        s.send("hola:" + s.message.from.name + r.response)
-    }
+    // async (s, r) => {
+    //     s.send("hola:" + s.message.from.name + r.response)
+    // }
     // function (session, args, next) {
     //     console.log("/")
 
@@ -190,7 +204,7 @@ bot.dialog('/profile', [
 ]);
 
 bot.on('conversationUpdate', function (message) {
-    console.log("conversationUpdate",message)
+    console.log("conversationUpdate", message)
 
     if (message.membersAdded && message.membersAdded.length > 0) {
         // Say hello

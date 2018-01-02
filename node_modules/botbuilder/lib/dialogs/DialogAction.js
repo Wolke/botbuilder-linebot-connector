@@ -1,8 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Session_1 = require("../Session");
-var Dialog_1 = require("./Dialog");
-var SimpleDialog_1 = require("./SimpleDialog");
-var consts = require("../consts");
+var Dialog_1 = require("../dialogs/Dialog");
+var SimpleDialog_1 = require("../dialogs/SimpleDialog");
 var utils = require("../utils");
 var DialogAction = (function () {
     function DialogAction() {
@@ -44,6 +44,7 @@ var DialogAction = (function () {
         };
     };
     DialogAction.validatedPrompt = function (promptType, validator) {
+        console.warn('DialogAction.validatedPrompt() has been deprecated as of version 3.8. Consider using custom prompts instead.');
         return new SimpleDialog_1.SimpleDialog(function (s, r) {
             r = r || {};
             var valid = false;
@@ -74,14 +75,14 @@ var DialogAction = (function () {
                 }
                 var a = utils.clone(s.dialogData);
                 a.maxRetries = 0;
-                s.beginDialog(consts.DialogId.Prompts, a);
+                s.beginDialog('BotBuilder:Prompts', a);
             }
             else if (s.dialogData.maxRetries > 0) {
                 s.dialogData.maxRetries--;
                 var a = utils.clone(s.dialogData);
                 a.maxRetries = 0;
                 a.prompt = s.dialogData.retryPrompt || "I didn't understand. " + s.dialogData.prompt;
-                s.beginDialog(consts.DialogId.Prompts, a);
+                s.beginDialog('BotBuilder:Prompts', a);
             }
             else {
                 s.endDialogWithResult({ resumed: Dialog_1.ResumeReason.notCompleted });

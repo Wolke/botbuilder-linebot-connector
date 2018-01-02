@@ -331,16 +331,18 @@ describe('localization', function() {
             builder.Prompts.text(session, 'id1');
         });
         bot.on('send', function (message) {
-            switch (message.text) {
-                case 'index-en1':
-                    connector.processMessage('goodbye');
-                    break;
-                case 'index-en2':
-                    done();
-                    break;
-                default:
-                    assert(false);
-                    break;
+            if (message.text) {
+                switch (message.text) {
+                    case 'index-en1':
+                        connector.processMessage('goodbye');
+                        break;
+                    case 'index-en2':
+                        done();
+                        break;
+                    default:
+                        assert(false);
+                        break;
+                }
             }
         });
         connector.processMessage('test');

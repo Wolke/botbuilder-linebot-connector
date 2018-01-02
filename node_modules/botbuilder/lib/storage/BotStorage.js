@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var MemoryBotStorage = (function () {
     function MemoryBotStorage() {
         this.userStore = {};
