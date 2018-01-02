@@ -78,6 +78,8 @@ export class LineConnector implements botbuilder.IConnector {
     replyToken;
     options;
     conversationId;
+
+    conversationType;
     event_cache = [];
 
     //form botframework
@@ -112,7 +114,7 @@ export class LineConnector implements botbuilder.IConnector {
         return hash === signature;
     }
     listen() {
-        // console.log("listen")
+        console.log("listen")
         const parser = bodyParser.json({
             verify: function (req: any, res, buf, encoding) {
                 req.rawBody = buf.toString(encoding);
@@ -135,10 +137,10 @@ export class LineConnector implements botbuilder.IConnector {
 
         const _this = this;
         _this.replyToken = replyToken;
-        console.log("addReplyToken1", _this.replyToken, _this.event_cache)
+        // console.log("addReplyToken1", _this.replyToken, _this.event_cache)
 
         setTimeout(() => {
-            console.log("addReplyToken2", _this.replyToken)
+            // console.log("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
                 _this.reply(_this.replyToken, _this.event_cache);
             }
@@ -148,13 +150,13 @@ export class LineConnector implements botbuilder.IConnector {
         }, 1000)
     }
     dispatch(body, res) {
-        // console.log("dispatch")
+        console.log("dispatch")
         const _this = this;
         if (!body || !body.events) {
             return;
         }
-        body.events.forEach(event => {
-            // console.log("event", event)
+        body.events.forEach(async event => {
+            console.log("event", event)
             _this.addReplyToken(event.replyToken)
 
             let m: any = {
@@ -170,36 +172,48 @@ export class LineConnector implements botbuilder.IConnector {
                 case 'user':
                     m.address.conversation.name = "user";
                     m.address.conversation.id = event.source.userId;
-                    _this.conversationId = event.source.userId;
-
-
                     m.address.channel.id = event.source.userId;
                     m.address.user.name = "user";
                     m.address.user.id = event.source.userId;
+                    _this.conversationId = event.source.userId;
 
-
-                    m.from = {
-                        id: event.source.userId,
-                        name: "user"
-                    }
                     break;
                 case 'group':
                     m.address.conversation.name = "group";
                     m.address.conversation.id = event.source.groupId;
-                    _this.conversationId = event.source.groupId;
+                    m.address.conversation.isGroup = true;
 
                     m.address.channel.id = event.source.groupId;
+                    m.address.user.name = "group";
+                    m.address.user.id = event.source.groupId;
+                    _this.conversationId = event.source.groupId;
+                    _this.conversationType = "group";
 
                     break;
                 case 'room':
                     m.address.conversation.name = "room";
                     m.address.conversation.id = event.source.roomId;
-                    _this.conversationId = event.source.roomId;
+                    m.address.conversation.isGroup = true;
 
                     m.address.channel.id = event.source.roomId;
+                    m.address.user.name = "room";
+                    m.address.user.id = event.source.roomId;
+                    _this.conversationId = event.source.roomId;
+                    _this.conversationType = "room";
 
                     break;
             }
+            if (event.source.userId) {
+                let r = await _this.getUserProfile(event.source.userId);
+
+                m.from = {
+                    id: event.source.userId,
+                    name: r.displayName,
+                    pictureUrl: r.pictureUrl,
+                    statusMessage: r.statusMessage
+                }
+            }
+
             switch (event.type) {
                 case 'message':
                     m.id = event.message.id;
@@ -252,23 +266,24 @@ export class LineConnector implements botbuilder.IConnector {
                     m.id = event.source.userId;
 
                     m.type = 'conversationUpdate'
-
+                    m.text = ""
                     break;
 
                 case 'unfollow':
 
                     m.id = event.source.userId;
                     m.type = 'conversationUpdate'
-
+                    m.text = ""
                     break;
 
                 case 'join':
                     m.type = 'conversationUpdate'
-
+                    m.text = ""
                     break;
 
                 case 'leave':
                     m.type = 'conversationUpdate'
+                    m.text = ""
                     break;
                 case 'postback':
 
@@ -276,7 +291,7 @@ export class LineConnector implements botbuilder.IConnector {
                     if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
                         data += `(${JSON.stringify(event.postback.params)})`;
                     }
-
+                    m.text = ""
                     break;
                 case 'beacon':
                     break;
@@ -285,7 +300,7 @@ export class LineConnector implements botbuilder.IConnector {
                     throw new Error(`Unknown event: ${JSON.stringify(event)}`);
                     break;
             }
-            console.log("m", m)
+            // console.log("m", m)
             _this.handler([m]);
 
         })
@@ -311,36 +326,36 @@ export class LineConnector implements botbuilder.IConnector {
     }
     post(path, body) {
         // console.log(path, body)
-        let r;
-        try {
-            r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
-        } catch (er) {
-            console.log(er)
-        }
-        return r
+        // let r;
+        // try {
+        //     r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
+        // } catch (er) {
+        //     console.log("er",er)
+        // }
+        return fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
     }
-    reply(replyToken, message) {
+    get(path) {
+        // console.log("get", path);
+        return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
+    }
+    async reply(replyToken, message) {
+        // console.log("reply")
 
         let m = LineConnector.createMessages(message);
         const body = {
             replyToken: replyToken,
             messages: m
         };
-        // console.log("reply", replyToken, body)
 
-        this.post('/message/reply', body).then(function (res) {
-            res.json().then(r => {
-                console.log("r", r)
-                if (r.message) {
-                    throw new Error(r.message)
-                }
-
-            })
-            return res.json();
-        });
+        let res = await this.post('/message/reply', body).then();
+        let r = res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
     }
 
-    push(toId, message) {
+    async push(toId, message) {
         let m = LineConnector.createMessages(message);
 
         const body = {
@@ -348,17 +363,75 @@ export class LineConnector implements botbuilder.IConnector {
             messages: m
         };
         // console.log("body", body)
-        this.post('/message/push', body).then(function (res) {
-            res.json().then(r => {
-                console.log("r", r)
-                if (r.message) {
-                    throw new Error(r.message)
-                }
-
-            })
-            return res.json();
-        });
+        let res = await this.post('/message/push', body).then();
+        let r = res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
     }
+
+    async getUserProfile(userId) {
+        let url = '/profile/' + userId;
+        // return url
+        let res = await this.get(url).then()
+        let r = await res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
+    }
+
+    async getMemberIDs() {
+        if (this.conversationType===undefined) {
+            throw new Error("not room or group")
+            return;
+        }
+        let url = `/${this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : ""}/${this.conversationId}/members/ids`
+        // return url
+        let res = await this.get(url).then()
+        // console.log(res)
+        let r = await res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
+    }
+
+    async getMemberRrofile( userId) {
+        if (this.conversationType===undefined) {
+            throw new Error("not room or group")
+            return;
+        }
+        let url = `/${this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : ""}/${this.conversationId}/member/${userId}`
+        // return url
+        let res = await this.get(url).then()
+        let r = await res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
+    }
+    
+    async leave() {
+        if(this.conversationType===undefined) {
+            throw new Error("not room or group")
+            return;
+        }
+        let url = `/${this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : ""}/${this.conversationId}/leave`
+      
+        const body = {
+            replyToken: this.replyToken,
+        };
+
+        let res = await this.post(url, body).then();
+        let r = res.json().then();
+        if (r.message) {
+            throw new Error(r.message)
+        }
+        return r;
+    }
+
 
     getRenderTemplate(event) {
         var _this = this;
@@ -481,7 +554,7 @@ export class LineConnector implements botbuilder.IConnector {
                     }
 
                     return event.attachments.map(a => {
-                        console.log("a", a)
+                        // console.log("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId }
@@ -583,7 +656,7 @@ export class LineConnector implements botbuilder.IConnector {
         const _this = this;
 
         messages.map(e => {
-            console.log("e", e)
+            // console.log("e", e)
             if (_this.hasPushApi) {
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
