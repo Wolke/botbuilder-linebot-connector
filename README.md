@@ -1,5 +1,6 @@
-
 ## Code Sample
+
+```js
 var express = require('express');
 import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location } from "botbuilder-linebot-connector"
@@ -138,3 +139,4 @@ bot.dialog("hello", [
         s.endDialog()
     }
 ])
+```
