@@ -17,9 +17,9 @@
     "mongodb": "^2.2.22",
     "node-fetch": "^1.7.3",
     "q": "^1.4.1",
-    "restify": "^4.3.0",
+    "restify": "^6.3.4",
     "simplesets": "^1.2.0",
-    "ws": "^2.0.2"
+    "ws": "^3.3.1"
   },
   "devDependencies": {
     "@slack/client": "^3.9.0",
