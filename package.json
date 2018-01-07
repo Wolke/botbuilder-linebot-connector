@@ -4,7 +4,8 @@
   "description": "line botframework builder",
   "scripts": {
     "dev": "tsc --watch & nodemon  ./bot.js",
-    "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./bot.js"
+    "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./bot.js",
+    "start" : "node ./bot.js"
   },
   "dependencies": {
     "@slack/client": "^3.9.0",
