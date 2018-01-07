@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 var builder = require("botbuilder");
-var istorage = require("./lib/IStorageClient");
-var azure = require("./lib/AzureBotStorage.js");
 var LineConnector_1 = require("./line/LineConnector");
 var q_list = require("./questions.js");
 // console.log(q_list)
@@ -11,10 +9,10 @@ var server = express();
 server.listen(process.env.port || process.env.PORT || 3980, function () {
     console.log("listening to");
 });
-var docDbClient = new istorage.IStorageClient();
-var tableStorage = new azure.AzureBotStorage({
-    gzipData: false
-}, docDbClient);
+// var docDbClient = new istorage.IStorageClient();
+// var tableStorage = new azure.AzureBotStorage({
+//     gzipData: false
+// }, docDbClient);
 var connector = new LineConnector_1.LineConnector({
     hasPushApi: false,
     // Miss Tarot 塔羅小姐
@@ -28,7 +26,8 @@ var connector = new LineConnector_1.LineConnector({
 });
 server.post('/line', connector.listen());
 // var connector = new builder.ConsoleConnector().listen();
-var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //set your storage here
+var bot = new builder.UniversalBot(connector);
+// .set('storage', tableStorage); //set your storage here
 bot.dialog("/", function (s) {
     s.beginDialog("start");
 });
