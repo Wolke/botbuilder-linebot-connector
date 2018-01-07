@@ -2,23 +2,17 @@
 ## Code Sample
 var express = require('express');
 import * as builder from "botbuilder";
-import * as  istorage from "./lib/IStorageClient";
-import * as  azure from './lib/AzureBotStorage.js';
-import { LineConnector, Sticker, Location } from "./line/LineConnector"
+import { LineConnector, Sticker, Location } from "botbuilder-linebot-connector"
 import { CardAction } from "botbuilder";
 var server = express();
 server.listen(process.env.port || process.env.PORT || 3980, function () {
     console.log("listening to");
 });
 
-var docDbClient = new istorage.IStorageClient();
-var tableStorage = new azure.AzureBotStorage({
-    gzipData: false
-}, docDbClient);
 
 var connector = new LineConnector({
     hasPushApi: false, //you to pay for push api >.,<
-    // your line 
+    // your line
     channelId: process.env.channelId || "",
     channelSecret: process.env.channelSecret || "",
     channelAccessToken: process.env.channelAccessToken || ""
@@ -27,7 +21,7 @@ var connector = new LineConnector({
 server.post('/line', connector.listen());
 // var connector = new builder.ConsoleConnector().listen();
 
-var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //set your storage here
+var bot = new builder.UniversalBot(connector)
 
 bot.dialog('/', [
     s => {
