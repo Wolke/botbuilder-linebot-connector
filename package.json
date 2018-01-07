@@ -9,30 +9,30 @@
     "main" : "index.js"
   },
   "dependencies": {
-    "@slack/client": "^3.9.0",
-    "@slack/events-api": "^1.0.1",
     "Q": "0.0.1",
     "array-intersection": "^0.1.2",
     "async": "^2.1.4",
     "azure-storage": "^2.6.0",
     "botbuilder": "^3.13.1",
-    "dotenv": "^4.0.0",
-    "fetch": "^1.1.0",
-    "lodash": "^4.17.4",
-    "moment": "^2.17.1",
     "mongodb": "^2.2.22",
-    "mysql": "^2.13.0",
-    "node-cron": "^1.1.3",
     "node-fetch": "^1.7.3",
-    "pg": "^6.1.2",
     "q": "^1.4.1",
-    "randomcolor": "^0.4.4",
     "restify": "^4.3.0",
     "simplesets": "^1.2.0",
-    "slack-node": "^0.1.8",
     "ws": "^2.0.2"
   },
   "devDependencies": {
-    "@types/node": "^8.5.2"
+    "@slack/client": "^3.9.0",
+    "@slack/events-api": "^1.0.1",
+    "@types/node": "^8.5.2",
+    "dotenv": "^4.0.0",
+    "fetch": "^1.1.0",
+    "lodash": "^4.17.4",
+    "pg": "^6.1.2",
+    "moment": "^2.17.1",
+    "mysql": "^2.13.0",
+    "node-cron": "^1.1.3",
+    "randomcolor": "^0.4.4",
+    "slack-node": "^0.1.8"
   }
 }
