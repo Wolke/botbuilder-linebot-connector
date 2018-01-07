@@ -20,7 +20,7 @@
       "name": "bot",
       "image": "node:slim",
       "essential": true,
-      "memory": 512,
+      "memory": 256,
       "command": [
         "/bin/bash",
         "/usr/src/app/run-ui.sh"
@@ -37,7 +37,7 @@
       "name": "mongo",
       "image": "mongo",
       "essential": true,
-      "memory": 512,
+      "memory": 256,
       "mountPoints": [{
         "sourceVolume": "mongo",
         "containerPath": "/data/db"
