@@ -16,10 +16,10 @@ server.listen(process.env.port || process.env.PORT || 3980, function () {
     console.log("listening to");
 });
 
-var docDbClient = new istorage.IStorageClient();
-var tableStorage = new azure.AzureBotStorage({
-    gzipData: false
-}, docDbClient);
+// var docDbClient = new istorage.IStorageClient();
+// var tableStorage = new azure.AzureBotStorage({
+//     gzipData: false
+// }, docDbClient);
 
 var connector = new LineConnector({
     hasPushApi: false, //you need to pay push api >.,<
@@ -36,7 +36,8 @@ var connector = new LineConnector({
 server.post('/line', connector.listen());
 
 // var connector = new builder.ConsoleConnector().listen();
-var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //set your storage here
+var bot = new builder.UniversalBot(connector)
+// .set('storage', tableStorage); //set your storage here
 
 bot.dialog("/", s => {
 
