@@ -1,156 +1,146 @@
-I created video  which demonstrate how You can store session and user data into mongo db 
-Find here [https://youtu.be/S0oO81oG2GY](https://youtu.be/S0oO81oG2GY)
-# BotBuilder-MongoDB
-Bot builder with Mongo Db(custom storage )
-
-## Introduction 
-This example code is written to show how we can store our bot session data into MongoDb
-
-## Motivation
-Microsoft bot builder bydefault store data  internally in Microsoft storage which have 64 Kb size limit per user.Other option to store data is Microsoft Azure Table and Microsoft Document Db.which doesn't have any data limit per user.
-Alternet solution is MongoDb.Installing mongdb in one server and storing our data in mongo db is much much chipper.
-So inorder to store session data into Mongo Db i implemented IstorageClient Interface.
 
 ## Code Sample
+var express = require('express');
+import * as builder from "botbuilder";
+import * as  istorage from "./lib/IStorageClient";
+import * as  azure from './lib/AzureBotStorage.js';
+import { LineConnector, Sticker, Location } from "./line/LineConnector"
+import { CardAction } from "botbuilder";
+var server = express();
+server.listen(process.env.port || process.env.PORT || 3980, function () {
+    console.log("listening to");
+});
 
-> "use strict";
-var Consts = require('./Consts');
-var mongodb_1 = require("mongodb");
-var replaceDot_Atrate = require("./replaceDot");
-var mongoDbConnection = require('./connection.js');
-var conf = require('../config/conf.js');
-var collectionName =conf.CollectionName;
+var docDbClient = new istorage.IStorageClient();
+var tableStorage = new azure.AzureBotStorage({
+    gzipData: false
+}, docDbClient);
 
-var IStorageClient = (function () {
-    function IStorageClient(options) {
-        this.options = options;
+var connector = new LineConnector({
+    hasPushApi: false, //you to pay for push api >.,<
+    // your line 
+    channelId: process.env.channelId || "",
+    channelSecret: process.env.channelSecret || "",
+    channelAccessToken: process.env.channelAccessToken || ""
+});
+
+server.post('/line', connector.listen());
+// var connector = new builder.ConsoleConnector().listen();
+
+var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //set your storage here
+
+bot.dialog('/', [
+    s => {
+        let m = new builder.Message(s)
+            .text("hello world")
+            .suggestedActions(
+            builder.SuggestedActions.create(
+                s, [
+                    new CardAction().type("datatimepicker").title("time"),
+                    new builder.CardAction().title("1").type("message").value("1"),
+                    // builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data")
+
+                ]
+            ));
+        s.send(m)
+        s.send(new builder.Message(s)
+            .addAttachment(
+            new Sticker(s, 1, 1)
+            )
+            .addAttachment(
+            new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
+            )
+            .addAttachment(
+            new builder.HeroCard(s)
+
+                .title("Classic White T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+
+                .buttons([
+                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+                    new CardAction().type("datatimepicker").title("time"),
+
+                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                    builder.CardAction.openUrl(s, "https://1797.tw", "1797")
+
+                ])
+            )
+
+        )
+        var msg = new builder.Message(s);
+        msg.attachmentLayout(builder.AttachmentLayout.carousel)
+        msg.attachments([
+
+            new builder.HeroCard(s)
+                .title("Classic White T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+                .buttons([
+                    builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+                    new CardAction().type("datatimepicker").title("time"),
+                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                ]),
+            new builder.HeroCard(s)
+                .title("Classic Gray T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
+                .buttons([
+                    new CardAction().type("datatimepicker").title("time"),
+                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                ])
+        ]);
+        builder.Prompts.text(s, msg);
+    },
+    async (s, r) => {
+        s.send("hola:" + s.message.from.name + r.response)
     }
-    
-    IStorageClient.prototype.retrieve = function (partitionKey, rowKey, callback) {
-        var id = partitionKey + ',' + rowKey;
-        if(rowKey!=="userData"){
-            var query={"$and":[{"userid":id}]}
-                mongoDbConnection(function(err,db) {
-                var iterator= db.collection(collectionName).find(query);
-                iterator.toArray(function (error, result, responseHeaders) {
-                    if (error) {
-                        console.log("Error",error)
-                        callback(error, null, null);
-                    }
-                    else if (result.length == 0) {
-                        callback(null, null, null);
-                    }
-                    else {
-                        var document_1 = result[0];
-                        var finaldoc=replaceDot_Atrate.substituteKeyDeep(document_1, /\@/g, '.');
-                        finaldoc["id"]=id
-                        callback(null, finaldoc, null);
-                    }
-                });
-            }); 
-        }
-        else{
-            var query={"$and":[{"userid":partitionKey}]}
-            mongoDbConnection(function(err,db) { 
+]);
 
-                var iterator= db.collection(collectionName).find(query);
-                iterator.toArray(function (error, result, responseHeaders) {
-                    if (error) {
-                        callback(error, null, null);
-                    }
-                    else if (result.length == 0) {
-                        callback(null, null, null);
-                    }
-                    else {
-                        var document_1 = result[0];
-                        callback(null, document_1, null);
-                    }
-                });
-            });
-        }
-    };
-    
-    IStorageClient.prototype.initialize = function (callback) {
-        var _this = this;
-        var client=mongodb_1.MongoClient;
-        this.client = client;
-     
-        mongoDbConnection(function(err,database) {    
-                _this.database = database;
-                _this.collection = database.collection(collectionName);
-                callback(null);
-         });
-    };
+bot.dialog('leave'
+    , s => {
+        s.send("byebye");
+        connector.leave();
 
-    IStorageClient.prototype.insertOrReplace = function (partitionKey, rowKey, entity, isCompressed, callback) {
-        var id=partitionKey + ',' + rowKey
-        var docDbEntity = { id: partitionKey + ',' + rowKey, data: entity, isCompressed: isCompressed };
-        if(rowKey!=="userData"){
-            var newEntitiy=replaceDot_Atrate.substituteKeyDeep(entity, /\./g, '@');
-            var conditions1 = {
-                'userid': id
-            };
-            var updateobj1 = {
-                "$set": {"data":newEntitiy,"isCompressed":false}
-            };   
-            mongoDbConnection(function(error,db) {    
-                db.collection(collectionName).update(conditions1,updateobj1,{upsert: true},function(err,res){
-                callback(error, null,"");
-            });
-            });
-        }
-        else{
-            var conditions = {
-                'userid': partitionKey
-            };
-            var update = {
-                "$set": {"data":entity}
-            }
-            mongoDbConnection(function(error,db) {    
-                db.collection(collectionName).update(conditions,update,{upsert: true},function(err,res){
-                callback(error, null,"");
-           })
-        });
-        } 
-    };
-    
-    IStorageClient.getError = function (error) {
-        if (!error)
-            return null;
-        return new Error('Error Code: ' + error.code + ' Error Body: ' + error.body);
-    };
-    
-    return IStorageClient;
-}());
-exports.IStorageClient = IStorageClient;
+        s.endDialog()
 
+    }
+).triggerAction({
+    matches: /^leave$/i
+});
 
+bot.on('conversationUpdate', function (message) {
+    // console.log("conversationUpdate", message)
+    switch (message.text) {
+        case 'follow':
+            break;
+        case 'unfollow':
+            break;
+        case 'join':
+            break;
+        case 'leave':
+            break;
+    }
+    var isGroup = message.address.conversation.isGroup;
+    var txt = isGroup ? "Hello everyone!" : "Hello " + message.from.name;
+    var reply = new builder.Message()
+        .address(message.address)
+        .text(txt);
+    bot.send(reply);
+    bot.beginDialog(message.address, "hello")
+});
 
-
-
-## Require Module 
-1. sudo npm install azure-storage
-2. sudo npm install mongodb --save
-
-## Steps and Code Details
-Mongo Db Ip address and Mongo Port in config/conf.js
-
-I implemented IStorageClient(lib/IStorageClient.js) interface which internally use replaceDot(lib/replaceDot.js).
-
-I am  replacing dot with @ in each key during insertion time,because Mongo Db doesn't support "." in key.
-
-Same Code using to change @ to . After MongoDB document fetch.It will not effect to futionality
-
-
-//Store session and context into mnongodb
-
-var docDbClient = new istorage.IStorageClient();  //here is our logic to store data into mongo db  
-
-var tableStorage = new azure.AzureBotStorage({ gzipData: false },docDbClient); //passing object to here
-
-var bot = new builder.UniversalBot(connector).set('storage', tableStorage);//set your storage here
-
-## Reference Link:
-1.[https://youtu.be/S0oO81oG2GY](https://youtu.be/S0oO81oG2GY)
-2. [https://github.com/Microsoft/BotBuilder/issues/1943](https://github.com/Microsoft/BotBuilder/issues/1943)
-3. [http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder](http://stackoverflow.com/questions/43153824/how-to-store-session-data-into-custom-storage-in-bot-builder)
+bot.dialog("hello", [
+    s => {
+        builder.Prompts.text(s, "go");
+    },
+    (s, r) => {
+        s.send("oh!" + r.response)
+        s.endDialog()
+    }
+])

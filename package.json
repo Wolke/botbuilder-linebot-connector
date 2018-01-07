@@ -1,11 +1,12 @@
 {
-  "name": "line-builder",
-  "version": "0.0.1",
+  "name": "botbuilder-linebot-connector",
+  "version": "2.0.2",
   "description": "line botframework builder",
   "scripts": {
     "dev": "tsc --watch & nodemon  ./bot.js",
     "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./bot.js",
-    "start" : "node ./bot.js"
+    "start" : "node ./bot.js",
+    "main" : "./line/LineConnector.js"
   },
   "dependencies": {
     "@slack/client": "^3.9.0",
