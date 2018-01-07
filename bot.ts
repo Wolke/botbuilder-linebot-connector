@@ -1,6 +1,6 @@
 var express = require('express');
 
-
+var config = require("config")
 import * as builder from "botbuilder";
 import * as  istorage from "./lib/IStorageClient";
 import * as  azure from './lib/AzureBotStorage.js';
@@ -23,15 +23,9 @@ server.listen(process.env.port || process.env.PORT || 3980, function () {
 
 var connector = new LineConnector({
     hasPushApi: false, //you need to pay push api >.,<
-    // Miss Tarot 塔羅小姐
-    // channelId: process.env.channelId || "1487202031",
-    // channelSecret: process.env.channelSecret || "64078989ba8249519163b052eca6bc58",
-    // channelAccessToken: process.env.channelAccessToken || "QELaTKb+JpKNt+LndfixVD8EA+DGID5wgvZ10skM3F2nPPzvTC7ZpvxQ3onkR+hu06eRv1S+NG6Cfyw3EtfW21K6x6RGBRqf8ehPYUalja77myU10cSBR9GmYA/HDri9jDg5YqDHUVg5JCrkb+nnygdB04t89/1O/w1cDnyilFU="
-    // Miss Tarot 知識狼
-    channelId: process.env.channelId || "1487296483",
-    channelSecret: process.env.channelSecret || "40e21b20df162705bcccc3066fde13ee",
-    channelAccessToken: process.env.channelAccessToken || "dVxAd9kcq59UXD8ANh503yB+14sWaWOH6DMLjMa8OPCpwdaeeXFHvzlQ1VH3OC/hm62Kz0w8VgcpOZdWuSGK3bD/Q1zsKXs1WIrkK9o6yACkKUASTy6fu0T6ulRSAOoamCzGDwKHAPH5aM0ohx4f4QdB04t89/1O/w1cDnyilFU="
-
+    channelId: config.channelId,
+    channelSecret: config.channelSecret,
+    channelAccessToken: config.channelAccessToken
 });
 server.post('/line', connector.listen());
 
@@ -40,7 +34,6 @@ var bot = new builder.UniversalBot(connector)
 // .set('storage', tableStorage); //set your storage here
 
 bot.dialog("/", s => {
-
     s.beginDialog("start")
 })
 
