@@ -2,8 +2,8 @@ var express = require('express');
 
 var config = require("config")
 import * as builder from "botbuilder";
-import * as  istorage from "./lib/IStorageClient";
-import * as  azure from './lib/AzureBotStorage.js';
+// import * as  istorage from "./lib/IStorageClient";
+// import * as  azure from './lib/AzureBotStorage.js';
 
 import { LineConnector, Sticker, Location } from "./line/LineConnector"
 import { CardAction } from "botbuilder";

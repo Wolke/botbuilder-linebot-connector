@@ -38,28 +38,22 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 var builder = require("botbuilder");
-var istorage = require("./lib/IStorageClient");
-var azure = require("./lib/AzureBotStorage.js");
 var LineConnector_1 = require("./line/LineConnector");
 var botbuilder_1 = require("botbuilder");
 var server = express();
 server.listen(process.env.port || process.env.PORT || 3980, function () {
     console.log("listening to");
 });
-var docDbClient = new istorage.IStorageClient();
-var tableStorage = new azure.AzureBotStorage({
-    gzipData: false
-}, docDbClient);
 var connector = new LineConnector_1.LineConnector({
     hasPushApi: false,
-    // Miss Tarot 塔羅小姐
-    channelId: process.env.channelId || "1487202031",
-    channelSecret: process.env.channelSecret || "64078989ba8249519163b052eca6bc58",
-    channelAccessToken: process.env.channelAccessToken || "QELaTKb+JpKNt+LndfixVD8EA+DGID5wgvZ10skM3F2nPPzvTC7ZpvxQ3onkR+hu06eRv1S+NG6Cfyw3EtfW21K6x6RGBRqf8ehPYUalja77myU10cSBR9GmYA/HDri9jDg5YqDHUVg5JCrkb+nnygdB04t89/1O/w1cDnyilFU="
+    // your line
+    channelId: process.env.channelId || "",
+    channelSecret: process.env.channelSecret || "",
+    channelAccessToken: process.env.channelAccessToken || ""
 });
 server.post('/line', connector.listen());
 // var connector = new builder.ConsoleConnector().listen();
-var bot = new builder.UniversalBot(connector).set('storage', tableStorage); //set your storage here
+var bot = new builder.UniversalBot(connector);
 bot.dialog('/', [
     function (s) {
         var m = new builder.Message(s)
