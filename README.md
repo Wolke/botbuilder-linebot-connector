@@ -1,3 +1,18 @@
+------
+
+[![NPM][npm-badge]][npm]
+[![LICENSE][license-badge]][license]
+[![dependencies][dependencies-badge]][dependencies-david]
+
+[npm]: https://www.npmjs.com/package/botbuilder-linebot-connector
+
+
+## Docs
+
+```sh
+npm install --save botbuilder-linebot-connector
+```
+
 ## Code Sample
 
 ```js
