@@ -1,7 +1,8 @@
 # botbuilder-linebot-connector
 Microsoft Bot Framework V3 connector for Line office account
 
-  [![NPM Version][npm-url]
+[![npm version](https://badge.fury.io/js/botbuilder-linebot-connector.svg)](https://badge.fury.io/js/botbuilder-linebot-connector)
+[![dependencies Status](https://david-dm.org/Wolke/botbuilder-linebot-connector/status.svg)](https://david-dm.org/Wolke/botbuilder-linebot-connector)
 
 
 ## Features
