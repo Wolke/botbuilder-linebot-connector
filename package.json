@@ -1,18 +1,19 @@
 {
   "name": "botbuilder-linebot-connector",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "line botframework builder",
   "scripts": {
     "dev": "tsc --watch & nodemon  ./bot.js",
     "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./bot.js",
-    "start" : "node ./bot.js",
-    "main" : "index.js"
+    "start": "node ./bot.js",
+    "main": "index.js"
   },
   "dependencies": {
     "Q": "0.0.1",
     "array-intersection": "^0.1.2",
     "async": "^2.1.4",
     "azure-storage": "^2.6.0",
+    "body-parser": "^1.18.2",
     "botbuilder": "^3.13.1",
     "mongodb": "^2.2.22",
     "node-fetch": "^1.7.3",
@@ -35,8 +36,8 @@
     "randomcolor": "^0.4.4",
     "slack-node": "^0.1.8"
   },
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/Wolke/botbuilder-linebot-connector.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wolke/botbuilder-linebot-connector.git"
   }
 }
