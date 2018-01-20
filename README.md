@@ -1,22 +1,37 @@
-------
+# botbuilder-linebot-connector
+Microsoft Bot Framework V3 connector for Line office account
 
-[![NPM][npm-badge]][npm]
-[![LICENSE][license-badge]][license]
-[![dependencies][dependencies-badge]][dependencies-david]
-
-[npm]: https://www.npmjs.com/package/botbuilder-linebot-connector
+[![npm version](https://badge.fury.io/js/botbuilder-linebot-connector.svg)](https://badge.fury.io/js/botbuilder-linebot-connector)
+[![dependencies Status](https://david-dm.org/Wolke/botbuilder-linebot-connector/status.svg)](https://david-dm.org/Wolke/botbuilder-linebot-connector)
 
 
-## Docs
+## Features
 
-```sh
+* ready for Microsoft Bot Framework V3
+* **no need a registered bot** on [dev.botframework.com](https://dev.botframework.com/), but require a certified line developer account, go to apply [trial account](https://developers.line.me/en/)
+* depend on [line](https://developers.line.me/en/) and [line-message-api](https://developers.line.me/en/services/messaging-api/) packages
+* support receiving and sending almost any line message types
+* for [express](http://expressjs.com/) framework
+
+
+LINE Messaging API for Node.js
+
+# About LINE Messaging API
+
+Please refer to the official API documents for details.
+- Developer Documents - https://developers.line.me/messaging-api/overview
+- API Reference - https://devdocs.line.me/en/#messaging-api
+
+# Installation
+
+```bash
 npm install --save botbuilder-linebot-connector
 ```
 
-
 ## Code Sample
+### java script
+
 ```js
-//java script
 var builder = require("botbuilder")
 var LineConnector = require("botbuilder-linebot-connector");
 
@@ -29,7 +44,7 @@ server.listen(process.env.port || process.env.PORT || 3980, function () {
 
 
 var connector = new LineConnector.LineConnector({
-    hasPushApi: false, //you to pay for push api >.,<
+    hasPushApi: false, //you have to pay for push api >.,<
     // your line
     channelId: process.env.channelId || "",
     channelSecret: process.env.channelSecret || "",
@@ -41,29 +56,29 @@ server.post('/line', connector.listen());
 var bot = new builder.UniversalBot(connector)
 
 bot.dialog("/", s => {
-    // s.send(new builder.Message(s)
-    //     /* Sticker  */
-    //     .addAttachment(
-    //         new LineConnector.Sticker(s, 1, 1)
-    //     )
-    //     /* Location  */
-    //     .addAttachment(
-    //         new LineConnector.Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
-    //     )
-    //     /* Audio file */
-    //     .addAttachment(
-    //         new builder.AudioCard(s).media([{
-    //             url: "https://xxx", //file place must be https
-    //             profile: "music"
-    //         }])
-    //         /* Image file */
-    //     ).addAttachment(
-    //         new builder.MediaCard(s).image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
-    //         /* Video file */
-    //     ).addAttachment(
-    //         new builder.MediaCard(s).media('https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG').image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
-    //     )
-    // );
+    s.send(new builder.Message(s)
+        /* Sticker  */
+        .addAttachment(
+            new LineConnector.Sticker(s, 1, 1)
+        )
+        /* Location  */
+        .addAttachment(
+            new LineConnector.Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
+        )
+        /* Audio file */
+        .addAttachment(
+            new builder.AudioCard(s).media([{
+                url: "https://xxx", //file place must be https
+                profile: "music"
+            }])
+            /* Image file */
+        ).addAttachment(
+            new builder.MediaCard(s).image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
+            /* Video file */
+        ).addAttachment(
+            new builder.MediaCard(s).media('https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG').image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
+        )
+    );
 
 
     /* Dialog */
@@ -167,9 +182,9 @@ bot.dialog("hello", [
 ])
 
 ```
+### type script
 
 ```ts
-//type script
 var express = require('express');
 import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location } from "botbuilder-linebot-connector"
@@ -335,3 +350,14 @@ bot.dialog("hello", [
     }
 ])
 ```
+
+
+# License
+
+The MIT license
+
+[express-url]: http://expressjs.com
+[webhook-event-url]: https://devdocs.line.me/en/#webhook-event-object
+[send-message-url]: https://devdocs.line.me/en/#send-message-object
+
+[npm-url]: https://www.npmjs.com/package/botbuilder-linebot-connector
