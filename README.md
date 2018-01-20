@@ -354,7 +354,7 @@ bot.dialog("hello", [
 
 # License
 
-  [MIT](LICENSE)
+The MIT license
 
 [express-url]: http://expressjs.com
 [webhook-event-url]: https://devdocs.line.me/en/#webhook-event-object
