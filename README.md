@@ -14,8 +14,12 @@ npm install --save botbuilder-linebot-connector
 ```
 
 ## Code Sample
-
 ```js
+//java script
+```
+
+```ts
+//type script
 var express = require('express');
 import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location } from "botbuilder-linebot-connector"
@@ -54,13 +58,39 @@ bot.dialog('/', [
                 ]
             ));
         s.send(m)
+        
+
+
         s.send(new builder.Message(s)
-            .addAttachment(
+            /* Sticker  */
+          
+          .addAttachment(
             new Sticker(s, 1, 1)
             )
+            /* Location  */
+          
             .addAttachment(
             new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
             )
+            /* Audio file */
+            .addAttachment(
+                new builder.AudioCard(s).media([{
+                    url:"https://xxx", //file place must be https
+                    profile:"music"
+                }])
+            )
+            /* Image file */
+            ).addAttachment(
+                new builder.MediaCard(s).image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
+            )
+              /* Video file */
+            ).addAttachment(
+                new builder.MediaCard(s).image(builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG'))
+            )
+            
+
+              /* Dialog */
+          
             .addAttachment(
             new builder.HeroCard(s)
 
@@ -80,6 +110,8 @@ bot.dialog('/', [
             )
 
         )
+            /* Carosuel */
+          
         var msg = new builder.Message(s);
         msg.attachmentLayout(builder.AttachmentLayout.carousel)
         msg.attachments([
