@@ -29,7 +29,7 @@ npm install --save botbuilder-linebot-connector
 ```
 
 ## Code Sample
-### java script
+### javaScript
 
 ```js
 var builder = require("botbuilder")
@@ -182,7 +182,7 @@ bot.dialog("hello", [
 ])
 
 ```
-### type script
+### typeScript
 
 ```ts
 var express = require('express');
