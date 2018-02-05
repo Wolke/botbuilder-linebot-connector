@@ -140,6 +140,14 @@ var LineConnector = /** @class */ (function () {
             });
         };
     };
+    LineConnector.prototype.serverlessWebhock = function (event) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.dispatch(JSON.parse(event.body), null);
+                return [2 /*return*/];
+            });
+        });
+    };
     LineConnector.prototype.addReplyToken = function (replyToken) {
         var _this = this;
         _this.replyToken = replyToken;
@@ -155,9 +163,10 @@ var LineConnector = /** @class */ (function () {
     };
     LineConnector.prototype.dispatch = function (body, res) {
         var _this = this;
-        // console.log("dispatch")
+        console.log("dispatch");
         var _this = this;
         if (!body || !body.events) {
+            console.log("dispatch return");
             return;
         }
         body.events.forEach(function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -321,6 +330,7 @@ var LineConnector = /** @class */ (function () {
         return [message];
     };
     LineConnector.prototype.post = function (path, body) {
+        console.log("post", path, body);
         // console.log(path, body)
         // let r;
         // try {
@@ -340,6 +350,7 @@ var LineConnector = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        console.log("reply");
                         m = LineConnector.createMessages(message);
                         body = {
                             replyToken: replyToken,
