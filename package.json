@@ -1,40 +1,23 @@
 {
   "name": "botbuilder-linebot-connector",
-  "version": "2.0.10",
+  "version": "2.1.0",
   "description": "line botframework builder",
   "scripts": {
     "dev": "tsc --watch & nodemon  ./bot.js",
-    "dev2": "tsc --watch & nodemon --inspect-brk=5858  ./bot.js",
+    "dev_serverless": "tsc --watch & nodemon ./handler.js",
     "start": "node ./bot.js",
     "main": "index.js"
   },
   "dependencies": {
-    "Q": "0.0.1",
-    "array-intersection": "^0.1.2",
-    "async": "^2.1.4",
-    "azure-storage": "^2.6.0",
     "body-parser": "^1.18.2",
     "botbuilder": "^3.13.1",
-    "mongodb": "^2.2.22",
-    "node-fetch": "^1.7.3",
-    "q": "^1.4.1",
-    "restify": "^6.3.4",
-    "simplesets": "^1.2.0",
-    "ws": "^3.3.1"
+    "express": "^4.16.2",
+    "node-fetch": "^1.7.3"
   },
   "devDependencies": {
-    "@slack/client": "^3.9.0",
-    "@slack/events-api": "^1.0.1",
-    "@types/node": "^8.5.2",
-    "dotenv": "^4.0.0",
-    "fetch": "^1.1.0",
-    "lodash": "^4.17.4",
-    "pg": "^6.1.2",
-    "moment": "^2.17.1",
-    "mysql": "^2.13.0",
-    "node-cron": "^1.1.3",
-    "randomcolor": "^0.4.4",
-    "slack-node": "^0.1.8"
+ 
+    "@types/node": "^8.5.2"
+ 
   },
   "repository": {
     "type": "git",

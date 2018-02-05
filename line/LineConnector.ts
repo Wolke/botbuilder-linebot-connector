@@ -85,8 +85,6 @@ export class LineConnector implements botbuilder.IConnector {
     //form botframework
     handler;
 
-
-
     constructor(options) {
         this.options = options || {};
         this.options.channelId = options.channelId || '';
@@ -121,9 +119,7 @@ export class LineConnector implements botbuilder.IConnector {
             }
         });
         return (req, res) => {
-
             parser(req, res, () => {
-
                 if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
                     return res.sendStatus(400);
                 }
@@ -131,6 +127,10 @@ export class LineConnector implements botbuilder.IConnector {
                 return res.json({});
             });
         };
+    }
+
+    async serverlessWebhock(event) {
+        this.dispatch(JSON.parse(event.body), null);
     }
 
     private addReplyToken(replyToken) {
@@ -150,9 +150,11 @@ export class LineConnector implements botbuilder.IConnector {
         }, 1000)
     }
     private dispatch(body, res) {
-        // console.log("dispatch")
+        console.log("dispatch")
         const _this = this;
         if (!body || !body.events) {
+            console.log("dispatch return")
+            
             return;
         }
         body.events.forEach(async event => {
@@ -328,6 +330,8 @@ export class LineConnector implements botbuilder.IConnector {
         return [message];
     }
     private post(path, body) {
+        console.log("post",path,body)
+       
         // console.log(path, body)
         // let r;
         // try {
@@ -342,7 +346,7 @@ export class LineConnector implements botbuilder.IConnector {
         return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
     }
     private async reply(replyToken, message) {
-        // console.log("reply")
+        console.log("reply")
 
         let m = LineConnector.createMessages(message);
         const body = {
