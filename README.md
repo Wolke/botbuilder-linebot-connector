@@ -12,7 +12,7 @@ Microsoft Bot Framework V3 connector for Line office account
 * depend on [line](https://developers.line.me/en/) and [line-message-api](https://developers.line.me/en/services/messaging-api/) packages
 * support receiving and sending almost any line message types
 * for [express](http://expressjs.com/) framework
-
+* serverless framework support - connector.serverlessWebhock(event)
 
 LINE Messaging API for Node.js
 
@@ -29,6 +29,8 @@ npm install --save botbuilder-linebot-connector
 ```
 
 ## Code Sample
+- example Documents - https://github.com/Wolke/botbuilder-linebot-connector-example
+
 ### javaScript
 
 ```js
