@@ -729,7 +729,7 @@ var LineConnector = /** @class */ (function () {
     LineConnector.prototype.send = function (messages, done) {
         // let ts = [];
         var _this = this;
-        messages.map(function (e) {
+        messages.map(function (e, i) {
             // console.log("e", e)
             if (_this.hasPushApi) {
                 _this.push(_this.conversationId, _this.getRenderTemplate(e));
@@ -743,7 +743,7 @@ var LineConnector = /** @class */ (function () {
                 else {
                     _this.event_cache.push(t);
                 }
-                if (_this.event_cache.length === 5) {
+                if ((_this.event_cache.length === messages.length) || _this.event_cache.length === 5) {
                     var r = (' ' + _this.replyToken).slice(1);
                     _this.replyToken = null;
                     _this.reply(r, _this.event_cache);

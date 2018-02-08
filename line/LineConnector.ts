@@ -704,7 +704,7 @@ export class LineConnector implements botbuilder.IConnector {
         // let ts = [];
         const _this = this;
 
-        messages.map(e => {
+        messages.map((e, i) => {
             // console.log("e", e)
             if (_this.hasPushApi) {
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
@@ -716,7 +716,7 @@ export class LineConnector implements botbuilder.IConnector {
                 } else {
                     _this.event_cache.push(t)
                 }
-                if (_this.event_cache.length === 5) {
+                if ((_this.event_cache.length === messages.length) || _this.event_cache.length === 5) {
                     let r = (' ' + _this.replyToken).slice(1);
                     _this.replyToken = null;
 
