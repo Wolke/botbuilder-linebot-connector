@@ -67,9 +67,9 @@ bot.dialog('/', [
             .addAttachment(new LineConnector_1.Sticker(s, 1, 1))
             .addAttachment(new LineConnector_1.Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203))
             .addAttachment(new builder.HeroCard(s)
-            .title("Classic White T-Shirt")
-            .subtitle("100% Soft and Luxurious Cotton")
-            .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+            .title("財神到＜百萬紅包大方抽＞")
+            .subtitle("免費抽紅包試手氣。獎品豐富，等您拿。")
+            .text("好玩喔！")
             .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
             .buttons([
             builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
