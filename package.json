@@ -15,9 +15,7 @@
     "node-fetch": "^1.7.3"
   },
   "devDependencies": {
- 
     "@types/node": "^8.5.2"
- 
   },
   "repository": {
     "type": "git",

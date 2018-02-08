@@ -157,6 +157,9 @@ var LineConnector = /** @class */ (function () {
             if (_this.replyToken && _this.event_cache.length > 0) {
                 _this.reply(_this.replyToken, _this.event_cache);
             }
+            if (_this.replyToken) {
+                console.log("wait for 1 second let will make replyToken no use, clean the replytoken");
+            }
             _this.replyToken = null;
             _this.event_cache = [];
         }, 1000);
