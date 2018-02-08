@@ -155,9 +155,11 @@ var LineConnector = /** @class */ (function () {
         setTimeout(function () {
             // console.log("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
-                _this.reply(_this.replyToken, _this.event_cache);
+                var r = (' ' + _this.replyToken).slice(1);
+                _this.replyToken = null;
+                _this.reply(r, _this.event_cache);
             }
-            if (_this.replyToken) {
+            if (_this.replyToken !== null) {
                 console.log("wait for 1 second let will make replyToken no use, clean the replytoken");
             }
             _this.replyToken = null;
@@ -742,8 +744,9 @@ var LineConnector = /** @class */ (function () {
                     _this.event_cache.push(t);
                 }
                 if (_this.event_cache.length === 5) {
-                    _this.reply(_this.replyToken, _this.event_cache);
+                    var r = (' ' + _this.replyToken).slice(1);
                     _this.replyToken = null;
+                    _this.reply(r, _this.event_cache);
                     _this.event_cache = [];
                 }
             }
