@@ -1,6 +1,6 @@
 {
   "name": "botbuilder-linebot-connector",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "line botframework builder",
   "scripts": {
     "dev": "tsc --watch & nodemon  ./bot.js",
