@@ -58,6 +58,27 @@ server.post('/line', connector.listen());
 var bot = new builder.UniversalBot(connector)
 
 bot.dialog("/", s => {
+    
+    console.log("s.message",s.message)
+//         s.message { timestamp: '2018-02-08T13:31:33.333Z',
+//   source: 'line',
+//   address: 
+//    { conversation:
+//       { name: 'room', // room , group , user
+//         id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d',
+//         isGroup: true }, / room or group will be true
+//      channel: { id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' },
+//      user: { name: 'room', id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' } },
+//   from:
+//    { id: 'Ub2da2efe8838ade6f5319b55500ea606',
+//      name: '綠蓋茶', // is who speak
+//      pictureUrl: 'http://dl.profile.line-cdn.net/0h_18pqKOFAB4FCSxKUJx_STlMDnNyJwZWfWxLenIPCSsgMUdIPmdHeHBeWCYtOkZBaz0afXMLXid4',
+//      statusMessage: undefined },
+//   id: '7442942284795',
+//   type: 'message',
+//   text: '你好',
+//   agent: 'botbuilder',
+//   user: { name: 'room', id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' } }
     s.send(new builder.Message(s)
         /* Sticker  */
         .addAttachment(
