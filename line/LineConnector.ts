@@ -142,8 +142,10 @@ export class LineConnector implements botbuilder.IConnector {
         setTimeout(() => {
             // console.log("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
-                _this.reply(_this.replyToken, _this.event_cache);
-            } if (_this.replyToken ) {
+                let r = (' ' + _this.replyToken).slice(1);
+                _this.replyToken = null;
+                _this.reply(r, _this.event_cache);
+            } if (_this.replyToken !== null) {
                 console.log("wait for 1 second let will make replyToken no use, clean the replytoken")
             }
             _this.replyToken = null;
@@ -156,7 +158,7 @@ export class LineConnector implements botbuilder.IConnector {
         const _this = this;
         if (!body || !body.events) {
             console.log("dispatch return")
-            
+
             return;
         }
         body.events.forEach(async event => {
@@ -332,8 +334,8 @@ export class LineConnector implements botbuilder.IConnector {
         return [message];
     }
     private post(path, body) {
-        console.log("post",path,body)
-       
+        console.log("post", path, body)
+
         // console.log(path, body)
         // let r;
         // try {
@@ -715,8 +717,10 @@ export class LineConnector implements botbuilder.IConnector {
                     _this.event_cache.push(t)
                 }
                 if (_this.event_cache.length === 5) {
-                    _this.reply(_this.replyToken, _this.event_cache);
+                    let r = (' ' + _this.replyToken).slice(1);
                     _this.replyToken = null;
+
+                    _this.reply(r, _this.event_cache);
                     _this.event_cache = [];
                 }
             } else {
