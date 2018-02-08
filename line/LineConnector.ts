@@ -380,7 +380,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    private async getUserProfile(userId) {
+    async getUserProfile(userId) {
         let url = '/profile/' + userId;
         // return url
         let res = await this.get(url).then()
