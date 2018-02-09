@@ -384,3 +384,5 @@ The MIT license
 [send-message-url]: https://devdocs.line.me/en/#send-message-object
 
 [npm-url]: https://www.npmjs.com/package/botbuilder-linebot-connector
+
+#If you like this, Welcome to give me Star

@@ -84,6 +84,7 @@ export class LineConnector implements botbuilder.IConnector {
 
     //form botframework
     handler;
+    timer;
 
     constructor(options) {
         this.options = options || {};
@@ -139,15 +140,16 @@ export class LineConnector implements botbuilder.IConnector {
         _this.replyToken = replyToken;
         // console.log("addReplyToken1", _this.replyToken, _this.event_cache)
 
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
             // console.log("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
                 let r = (' ' + _this.replyToken).slice(1);
                 _this.replyToken = null;
                 _this.reply(r, _this.event_cache);
-            } if (_this.replyToken !== null) {
+            }else if (_this.replyToken !== null) {
                 console.log("wait for 1 second let will make replyToken no use, clean the replytoken")
             }
+            
             _this.replyToken = null;
             _this.event_cache = [];
 
