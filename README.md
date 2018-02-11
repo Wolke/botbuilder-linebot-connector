@@ -31,6 +31,10 @@ npm install --save botbuilder-linebot-connector
 ## Code Sample
 - example Documents - https://github.com/Wolke/botbuilder-linebot-connector-example
 
+## Document
+- 使用 botframework + botbuilder-linebot-connector + serverless(AWS lambda) + botbuilder-mongodb-storage 連 mongodb cluster 開發 LineBot 入門 1 - http://wolke-codes.blogspot.tw/2018/02/botframework-botbuilder-linebot.html
+- 使用 botframework + botbuilder-linebot-connector + serverless(AWS lambda) + botbuilder-mongodb-storage 連 mongodb cluster 開發 LineBot 入門 2 - 
+http://wolke-codes.blogspot.tw/2018/02/botframework-botbuilder-linebot_10.html
 ### javaScript
 
 ```js
