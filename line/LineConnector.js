@@ -97,6 +97,7 @@ exports.Location = Location;
 var LineConnector = /** @class */ (function () {
     function LineConnector(options) {
         this.hasPushApi = false;
+        this.autoGetUserProfile = false;
         this.event_cache = [];
         this.options = options || {};
         this.options.channelId = options.channelId || '';
@@ -107,6 +108,9 @@ var LineConnector = /** @class */ (function () {
         }
         if (this.options.hasPushApi !== undefined) {
             this.hasPushApi = this.options.hasPushApi;
+        }
+        if (this.autoGetUserProfile !== undefined) {
+            this.autoGetUserProfile = this.options.autoGetUserProfile;
         }
         this.headers = {
             Accept: 'application/json',
@@ -175,7 +179,7 @@ var LineConnector = /** @class */ (function () {
             return;
         }
         body.events.forEach(function (event) { return __awaiter(_this, void 0, void 0, function () {
-            var m, r, message, data;
+            var m, r, e_1, message, data;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -220,9 +224,12 @@ var LineConnector = /** @class */ (function () {
                                 _this.conversationType = "room";
                                 break;
                         }
-                        if (!event.source.userId) return [3 /*break*/, 2];
-                        return [4 /*yield*/, _this.getUserProfile(event.source.userId)];
+                        if (!(event.source.userId && _this.autoGetUserProfile)) return [3 /*break*/, 4];
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, _this.getUserProfile(event.source.userId)];
+                    case 2:
                         r = _a.sent();
                         m.from = {
                             id: event.source.userId,
@@ -230,8 +237,12 @@ var LineConnector = /** @class */ (function () {
                             pictureUrl: r.pictureUrl,
                             statusMessage: r.statusMessage
                         };
-                        _a.label = 2;
-                    case 2:
+                        return [3 /*break*/, 4];
+                    case 3:
+                        e_1 = _a.sent();
+                        console.log(e_1);
+                        return [3 /*break*/, 4];
+                    case 4:
                         switch (event.type) {
                             case 'message':
                                 m.id = event.message.id;
