@@ -73,6 +73,7 @@ export class LineConnector implements botbuilder.IConnector {
     endpoint;
     botId;
     hasPushApi = false;
+    autoGetUserProfile = false
 
     //from dispatch
     replyToken;
@@ -96,6 +97,9 @@ export class LineConnector implements botbuilder.IConnector {
         }
         if (this.options.hasPushApi !== undefined) {
             this.hasPushApi = this.options.hasPushApi;
+        }
+        if (this.autoGetUserProfile !== undefined) {
+            this.autoGetUserProfile = this.options.autoGetUserProfile;
         }
 
         this.headers = {
@@ -146,10 +150,10 @@ export class LineConnector implements botbuilder.IConnector {
                 let r = (' ' + _this.replyToken).slice(1);
                 _this.replyToken = null;
                 _this.reply(r, _this.event_cache);
-            }else if (_this.replyToken !== null) {
+            } else if (_this.replyToken !== null) {
                 console.log("wait for 1 second let will make replyToken no use, clean the replytoken")
             }
-            
+
             _this.replyToken = null;
             _this.event_cache = [];
 
@@ -211,14 +215,18 @@ export class LineConnector implements botbuilder.IConnector {
 
                     break;
             }
-            if (event.source.userId) {
-                let r = await _this.getUserProfile(event.source.userId);
+            if (event.source.userId && _this.autoGetUserProfile) {
 
-                m.from = {
-                    id: event.source.userId,
-                    name: r.displayName,
-                    pictureUrl: r.pictureUrl,
-                    statusMessage: r.statusMessage
+                try {
+                    let r = await _this.getUserProfile(event.source.userId);
+                    m.from = {
+                        id: event.source.userId,
+                        name: r.displayName,
+                        pictureUrl: r.pictureUrl,
+                        statusMessage: r.statusMessage
+                    }
+                } catch (e) {
+                    console.log(e)
                 }
             }
 
