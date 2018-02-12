@@ -215,6 +215,9 @@ export class LineConnector implements botbuilder.IConnector {
 
                     break;
             }
+            m.from = {
+                id: event.source.userId
+            }
             if (event.source.userId && _this.autoGetUserProfile) {
 
                 try {
@@ -227,6 +230,7 @@ export class LineConnector implements botbuilder.IConnector {
                     }
                 } catch (e) {
                     console.log(e)
+                    
                 }
             }
 

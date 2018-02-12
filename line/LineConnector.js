@@ -224,6 +224,9 @@ var LineConnector = /** @class */ (function () {
                                 _this.conversationType = "room";
                                 break;
                         }
+                        m.from = {
+                            id: event.source.userId
+                        };
                         if (!(event.source.userId && _this.autoGetUserProfile)) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
