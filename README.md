@@ -27,6 +27,17 @@ Please refer to the official API documents for details.
 ```bash
 npm install --save botbuilder-linebot-connector
 ```
+
+## Donate; Buy me a Beer
+
+If you want to thank me, or promote your Issue.
+
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/wolkesau/1)
+
+> Sorry, but I have work and support for packages requires some time after work. I will be glad of your support and PR's.
+
+
 ## Document
 - 使用 botframework + botbuilder-linebot-connector + serverless(AWS lambda) + botbuilder-mongodb-storage 連 mongodb cluster 開發 LineBot 入門 1 - http://wolke-codes.blogspot.tw/2018/02/botframework-botbuilder-linebot.html
 - 使用 botframework + botbuilder-linebot-connector + serverless(AWS lambda) + botbuilder-mongodb-storage 連 mongodb cluster 開發 LineBot 入門 2 - 
@@ -64,7 +75,18 @@ server.post('/line', connector.listen());
 var bot = new builder.UniversalBot(connector)
 
 bot.dialog("/", s => {
-    
+            try{
+                let u = await connector.getUserProfile(s.message.from.id)
+                console.log("u" + u)
+                if (u === undefined) {
+                    s.send("who said:" + s.message.text)
+                } else {
+                    s.send("hello " + u.displayName)
+                }
+            }catch(e){
+                s.send("can`t get user profile!")
+            }
+
     console.log("s.message",s.message)
 //         s.message { timestamp: '2018-02-08T13:31:33.333Z',
 //   source: 'line',
