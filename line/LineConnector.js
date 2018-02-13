@@ -746,6 +746,7 @@ var LineConnector = /** @class */ (function () {
         messages.map(function (e, i) {
             // console.log("e", e)
             if (_this.hasPushApi) {
+                _this.conversationId = e.address.channel.id;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e));
             }
             else if (_this.replyToken) {
