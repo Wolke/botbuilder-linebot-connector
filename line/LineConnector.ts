@@ -230,7 +230,7 @@ export class LineConnector implements botbuilder.IConnector {
                     }
                 } catch (e) {
                     console.log(e)
-                    
+
                 }
             }
 
@@ -721,6 +721,7 @@ export class LineConnector implements botbuilder.IConnector {
         messages.map((e, i) => {
             // console.log("e", e)
             if (_this.hasPushApi) {
+                _this.conversationId = e.address.channel.id;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
                 let t = _this.getRenderTemplate(e)
