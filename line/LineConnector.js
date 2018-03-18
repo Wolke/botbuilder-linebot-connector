@@ -164,11 +164,11 @@ var LineConnector = /** @class */ (function () {
                 _this.reply(r, _this.event_cache);
             }
             else if (_this.replyToken !== null) {
-                console.log("wait for 1 second let will make replyToken no use, clean the replytoken");
+                console.log("wait for 2 seconds let will make replyToken no use, clean the replytoken");
             }
             _this.replyToken = null;
             _this.event_cache = [];
-        }, 1000);
+        }, 2000);
     };
     LineConnector.prototype.dispatch = function (body, res) {
         var _this = this;
