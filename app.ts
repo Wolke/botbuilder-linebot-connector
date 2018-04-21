@@ -2,18 +2,20 @@ var express = require('express');
 import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location } from "./line/LineConnector"
 import { CardAction } from "botbuilder";
+
+var config = require("./conf")
+
 var server = express();
-server.listen(process.env.port || process.env.PORT || 3980, function () {
+server.listen(process.env.port || process.env.PORT || 3000, function () {
     console.log("listening to");
 });
 
-
 var connector = new LineConnector({
-    hasPushApi: false, //you to pay for push api >.,<
-    // your line
-    channelId: process.env.channelId || "",
-    channelSecret: process.env.channelSecret || "",
-    channelAccessToken: process.env.channelAccessToken || ""
+    hasPushApi: true, //you need to pay push api >.,<
+    autoGetUserProfile: true,
+    channelId: config.channelId,
+    channelSecret: config.channelSecret,
+    channelAccessToken: config.channelAccessToken
 });
 
 server.post('/line', connector.listen());
@@ -23,45 +25,45 @@ var bot = new builder.UniversalBot(connector)
 
 bot.dialog('/', [
     s => {
-        let m = new builder.Message(s)
-            .text("hello world")
-            .suggestedActions(
-            builder.SuggestedActions.create(
-                s, [
-                    new CardAction().type("datatimepicker").title("time"),
-                    new builder.CardAction().title("1").type("message").value("1"),
-                    // builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
-                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data")
+        // let m = new builder.Message(s)
+        //     .text("hello world")
+        //     .suggestedActions(
+        //         builder.SuggestedActions.create(
+        //             s, [
+        //                 new CardAction().type("datatimepicker").title("time"),
+        //                 new builder.CardAction().title("1").type("message").value("1"),
+        //                 // builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+        //                 // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data")
 
-                ]
-            ));
-        s.send(m)
-        s.send(new builder.Message(s)
-            .addAttachment(
-            new Sticker(s, 1, 1)
-            )
-            .addAttachment(
-            new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
-            )
-            .addAttachment(
-            new builder.HeroCard(s)
+        //             ]
+        //         ));
+        // s.send(m)
+        // s.send(new builder.Message(s)
+        //     .addAttachment(
+        //         new Sticker(s, 1, 1)
+        //     )
+        //     .addAttachment(
+        //         new Location(s, "my test", "中和", 35.65910807942215, 139.70372892916203)
+        //     )
+        //     .addAttachment(
+        //         new builder.HeroCard(s)
 
-                .title("財神到＜百萬紅包大方抽＞")
-                .subtitle("免費抽紅包試手氣。獎品豐富，等您拿。")
-                .text("好玩喔！")
-                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+        //             .title("財神到＜百萬紅包大方抽＞")
+        //             .subtitle("免費抽紅包試手氣。獎品豐富，等您拿。")
+        //             .text("好玩喔！")
+        //             .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
 
-                .buttons([
-                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
-                    new CardAction().type("datatimepicker").title("time"),
+        //             .buttons([
+        //                 builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+        //                 new CardAction().type("datatimepicker").title("time"),
 
-                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
-                    builder.CardAction.openUrl(s, "https://1797.tw", "1797")
+        //                 builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+        //                 builder.CardAction.openUrl(s, "https://1797.tw", "1797")
 
-                ])
-            )
+        //             ])
+        //     )
 
-        )
+        // )
         var msg = new builder.Message(s);
         msg.attachmentLayout(builder.AttachmentLayout.carousel)
         msg.attachments([
@@ -73,8 +75,8 @@ bot.dialog('/', [
                 .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
                 .buttons([
                     builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
-                    new CardAction().type("datatimepicker").title("time"),
-                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                    // new CardAction().type("datatimepicker").title("time"),
+                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
                 ]),
             new builder.HeroCard(s)
                 .title("Classic Gray T-Shirt")
@@ -83,15 +85,27 @@ bot.dialog('/', [
                 .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/5d/6b/5d6b74b674e643f522ed68ef83053a1f.JPG')])
                 .buttons([
                     new CardAction().type("datatimepicker").title("time"),
-                    builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
-                    builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
-                ])
+                    // builder.CardAction.imBack(s, "buy classic gray t-shirt", "Buy"),
+                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                ]),
+            new builder.HeroCard(s)
+                .title("Classic White T-Shirt")
+                .subtitle("100% Soft and Luxurious Cotton")
+                .text("Price is $25 and carried in sizes (S, M, L, and XL)")
+                .images([builder.CardImage.create(s, 'https://imagelab.nownews.com/?w=1080&q=85&src=http://s.nownews.com/11/b9/11b93df1ec7012f4d772c8bb0ac74e10.png')])
+                .buttons([
+                    builder.CardAction.openUrl(s, "https://1797.tw", "1797"),
+                    // new CardAction().type("datatimepicker").title("time"),
+                    // builder.CardAction.postBack(s, "action=buy&itemid=111", "send data"),
+                ]),
         ]);
-        builder.Prompts.text(s, msg);
-    },
-    async (s, r) => {
-        s.send("hola:" + s.message.from.name + r.response)
+        s.send(msg)
+        // builder.Prompts.text(s, msg);
     }
+    // ,
+    // async (s, r) => {
+    //     s.send("hola:" + s.message.from.name + r.response)
+    // }
 ]);
 
 bot.dialog('leave'

@@ -596,15 +596,34 @@ var LineConnector = /** @class */ (function () {
                     if (event.attachmentLayout === 'carousel') {
                         //for carousel
                         //for image carousel
+                        // let be_same = event.attachments.reduce((c, n) => {
+                        //     return c.contentType === n.contentType
+                        // })
                         var be_same = event.attachments.reduce(function (c, n) {
-                            return c.contentType === n.contentType;
+                            if (c.contentType === n.contentType) {
+                                return c;
+                            }
+                            else {
+                                return false;
+                            }
                         });
                         if (!be_same) {
                             throw new Error("must be same attachment");
                         }
                         if (event.attachments[0].contentType === "application/vnd.microsoft.card.hero") {
+                            // let be_image_carousel = event.attachments.reduce((c, n) => {
+                            //     return c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1
+                            // })
                             var be_image_carousel = event.attachments.reduce(function (c, n) {
-                                return c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1;
+                                if (c === false) {
+                                    return false;
+                                }
+                                if (c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1) {
+                                    return c;
+                                }
+                                else {
+                                    return false;
+                                }
                             });
                             if (be_image_carousel) {
                                 return {

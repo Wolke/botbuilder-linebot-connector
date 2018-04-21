@@ -1,7 +1,10 @@
-config
-config.js
+conf.js
 node_modules
 lib
+bot.js
+bot.js.map
+app.js
+app.js.map
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

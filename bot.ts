@@ -1,6 +1,7 @@
 var express = require('express');
 
-var config = require("config")
+var config = require("./conf")
+
 import * as builder from "botbuilder";
 // import * as  istorage from "./lib/IStorageClient";
 // import * as  azure from './lib/AzureBotStorage.js';
@@ -12,7 +13,7 @@ import * as q_list from "./questions.js"
 import { connect } from "tls";
 // console.log(q_list)
 var server = express();
-server.listen(process.env.port || process.env.PORT || 3980, function () {
+server.listen(process.env.port || process.env.PORT || 3000, function () {
     console.log("listening to");
 });
 
@@ -77,11 +78,11 @@ bot.dialog("ask", [
         builder.Prompts.choice(s, new builder.Message(s)
             .text(q.q)
             .suggestedActions(
-            builder.SuggestedActions.create(
-                s, q.options.map(o => {
-                    return builder.CardAction.imBack(s, o, o)
-                })
-            )),
+                builder.SuggestedActions.create(
+                    s, q.options.map(o => {
+                        return builder.CardAction.imBack(s, o, o)
+                    })
+                )),
             q.options
         );
     },
