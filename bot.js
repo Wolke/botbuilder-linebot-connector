@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
-var config = require("config");
+var config = require("./conf");
 var builder = require("botbuilder");
 // import * as  istorage from "./lib/IStorageClient";
 // import * as  azure from './lib/AzureBotStorage.js';
@@ -9,7 +9,7 @@ var LineConnector_1 = require("./line/LineConnector");
 var q_list = require("./questions.js");
 // console.log(q_list)
 var server = express();
-server.listen(process.env.port || process.env.PORT || 3980, function () {
+server.listen(process.env.port || process.env.PORT || 3000, function () {
     console.log("listening to");
 });
 // var docDbClient = new istorage.IStorageClient();

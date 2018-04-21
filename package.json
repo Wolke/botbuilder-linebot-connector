@@ -1,12 +1,10 @@
 {
   "name": "botbuilder-linebot-connector",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "line botframework builder",
   "scripts": {
-    "dev": "tsc --watch & nodemon  ./bot.js",
-    "dev_serverless": "tsc --watch & nodemon ./handler.js",
-    "start": "node ./bot.js",
-    "main": "index.js"
+    "dev/bot": "tsc --watch & nodemon  ./bot.js",
+    "dev/app": "tsc --watch & nodemon  ./app.js"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -15,9 +13,7 @@
     "node-fetch": "^1.7.3"
   },
   "devDependencies": {
-
     "@types/node": "^8.5.2"
-
   },
   "repository": {
     "type": "git",
