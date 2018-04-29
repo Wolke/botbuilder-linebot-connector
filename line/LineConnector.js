@@ -618,7 +618,7 @@ var LineConnector = /** @class */ (function () {
                                 if (c === false) {
                                     return false;
                                 }
-                                if (c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1) {
+                                if (c.content.images && c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1) {
                                     return c;
                                 }
                                 else {
