@@ -312,7 +312,7 @@ export class LineConnector implements botbuilder.IConnector {
                     m.type = 'message'
                     let data = event.postback.data;
                     if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
-                        data = `${event.postback.params}`;
+                        data = `${event.postback.params.datetime}`;
                     }
                     m.text = data
                     break;
