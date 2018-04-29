@@ -477,8 +477,8 @@ export class LineConnector implements botbuilder.IConnector {
                     "uri": b.value
                 }
             } else if (b.type === 'datatimepicker') {
-                // console.log("datatimepicker")
-                return {
+                // console.log("datatimepicker", b)
+                let p = {
                     "type": "datetimepicker",
                     "label": b.title,
                     "data": "DATETIME",
@@ -487,6 +487,16 @@ export class LineConnector implements botbuilder.IConnector {
                     "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                     "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                 }
+                switch (b.value) {
+                    case 'after':
+                        p.min = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                        break;
+                    case 'before':
+                        p.max = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                        break;
+                }
+
+
             } else {
                 return {
                     "type": "message",
