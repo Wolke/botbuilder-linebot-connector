@@ -481,7 +481,7 @@ export class LineConnector implements botbuilder.IConnector {
                 return {
                     "type": "datetimepicker",
                     "label": b.title,
-                    "data": "storeId=12345",
+                    "data": "DATETIME",
                     "mode": "datetime",
                     "initial": new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8),
                     "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
