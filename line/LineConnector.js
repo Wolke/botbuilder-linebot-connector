@@ -311,9 +311,9 @@ var LineConnector = /** @class */ (function () {
                             case 'postback':
                                 m.type = 'message';
                                 data = event.postback.data;
-                                // if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
-                                //     data = `${JSON.stringify(event.postback.params)}`;
-                                // }
+                                if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
+                                    data = "" + event.postback.params;
+                                }
                                 m.text = data;
                                 break;
                             case 'beacon':
