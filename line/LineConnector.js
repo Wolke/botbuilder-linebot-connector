@@ -49,7 +49,8 @@ var Sticker = /** @class */ (function () {
     Sticker.prototype.toAttachment = function () {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "sticker",
                 content: {
