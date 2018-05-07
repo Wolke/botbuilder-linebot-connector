@@ -4,7 +4,7 @@ var express = require('express');
 var builder = require("botbuilder");
 var LineConnector_1 = require("./line/LineConnector");
 var botbuilder_1 = require("botbuilder");
-var config = require("./conf");
+var config = require("./conf").default;
 var server = express();
 server.listen(process.env.port || process.env.PORT || 3000, function () {
     console.log("listening to");

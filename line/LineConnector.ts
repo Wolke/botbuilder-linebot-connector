@@ -49,7 +49,8 @@ export class Location implements botbuilder.IIsAttachment {
         this.longitude = longitude;
     }
     toAttachment(): botbuilder.IAttachment {
-        if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "location",
                 content: {
@@ -185,6 +186,7 @@ export class LineConnector implements botbuilder.IConnector {
                     m.address.conversation.name = "user";
                     m.address.conversation.id = event.source.userId;
                     m.address.channel.id = event.source.userId;
+                    m.address.channel.source = "line";
                     m.address.user.name = "user";
                     m.address.user.id = event.source.userId;
                     _this.conversationId = event.source.userId;

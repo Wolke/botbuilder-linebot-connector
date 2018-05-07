@@ -3,7 +3,7 @@ import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location } from "./line/LineConnector"
 import { CardAction } from "botbuilder";
 
-var config = require("./conf")
+var config = require("./conf").default
 
 var server = express();
 server.listen(process.env.port || process.env.PORT || 3000, function () {

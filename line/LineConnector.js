@@ -75,7 +75,8 @@ var Location = /** @class */ (function () {
         this.longitude = longitude;
     }
     Location.prototype.toAttachment = function () {
-        if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "location",
                 content: {
@@ -199,6 +200,7 @@ var LineConnector = /** @class */ (function () {
                                 m.address.conversation.name = "user";
                                 m.address.conversation.id = event.source.userId;
                                 m.address.channel.id = event.source.userId;
+                                m.address.channel.source = "line";
                                 m.address.user.name = "user";
                                 m.address.user.id = event.source.userId;
                                 _this.conversationId = event.source.userId;
@@ -529,8 +531,8 @@ var LineConnector = /** @class */ (function () {
                 };
             }
             else if (b.type === 'datatimepicker') {
-                // console.log("datatimepicker")
-                return {
+                // console.log("datatimepicker", b)
+                var p = {
                     "type": "datetimepicker",
                     "label": b.title,
                     "data": "DATETIME",
@@ -539,6 +541,14 @@ var LineConnector = /** @class */ (function () {
                     "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                     "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                 };
+                switch (b.value) {
+                    case 'after':
+                        p.min = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                        break;
+                    case 'before':
+                        p.max = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                        break;
+                }
             }
             else {
                 return {
