@@ -550,6 +550,7 @@ var LineConnector = /** @class */ (function () {
                         p.max = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
                         break;
                 }
+                return p;
             }
             else {
                 return {

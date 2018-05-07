@@ -500,6 +500,7 @@ export class LineConnector implements botbuilder.IConnector {
                         break;
                 }
 
+                return p
 
             } else {
                 return {
