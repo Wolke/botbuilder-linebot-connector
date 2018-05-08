@@ -491,15 +491,23 @@ export class LineConnector implements botbuilder.IConnector {
                     "max": new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                     "min": new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 30 * 12)).toISOString().substring(0, new Date().toISOString().length - 8),
                 }
-                switch (b.value) {
-                    case 'after':
-                        p.min = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
-                        break;
-                    case 'before':
-                        p.max = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
-                        break;
-                }
+                if (b.value) {
+                    if (typeof (b.value) === "string") {
+                        switch (b.value) {
+                            case 'after':
+                                p.min = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                                break;
+                            case 'before':
+                                p.max = new Date(new Date().getTime() - (1000 * 60 * new Date().getTimezoneOffset())).toISOString().substring(0, new Date().toISOString().length - 8);
+                                break;
+                        }
 
+                    } else if (typeof (b.value) === "object") {
+                        p.initial = b.value.initial ? b.value.initial : p.initial
+                        p.max = b.value.max ? b.value.max : p.max
+                        p.min = b.value.min ? b.value.min : p.min
+                    }
+                }
                 return p
 
             } else {
