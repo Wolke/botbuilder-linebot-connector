@@ -128,9 +128,9 @@ export class LineConnector implements botbuilder.IConnector {
         });
         return (req, res) => {
             parser(req, res, () => {
-                if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
-                    return res.sendStatus(400);
-                }
+                // if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
+                //     return res.sendStatus(400);
+                // }
                 this.dispatch(req.body, res);
                 return res.json({});
             });
