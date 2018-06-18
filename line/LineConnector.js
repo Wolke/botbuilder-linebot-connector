@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -37,7 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fetch = require('node-fetch');
 var crypto = require('crypto');
-var url = require('url');
+var util = require('util');
+var debuglog = util.debuglog('linebot');
 var bodyParser = require("body-parser");
 var botbuilder = require("botbuilder");
 var Sticker = /** @class */ (function () {
@@ -48,7 +49,7 @@ var Sticker = /** @class */ (function () {
     }
     Sticker.prototype.toAttachment = function () {
         // throw new Error("Method not implemented.");
-        // console.log(this.session.message)
+        // debuglog(this.session.message)
         if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
@@ -129,8 +130,8 @@ var LineConnector = /** @class */ (function () {
         return hash === signature;
     };
     LineConnector.prototype.listen = function () {
-        var _this = this;
-        console.log("listen");
+        var _this_1 = this;
+        debuglog("listen");
         var parser = bodyParser.json({
             verify: function (req, res, buf, encoding) {
                 req.rawBody = buf.toString(encoding);
@@ -141,7 +142,7 @@ var LineConnector = /** @class */ (function () {
                 // if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
                 //     return res.sendStatus(400);
                 // }
-                _this.dispatch(req.body, res);
+                _this_1.dispatch(req.body, res);
                 return res.json({});
             });
         };
@@ -157,35 +158,35 @@ var LineConnector = /** @class */ (function () {
     LineConnector.prototype.addReplyToken = function (replyToken) {
         var _this = this;
         _this.replyToken = replyToken;
-        // console.log("addReplyToken1", _this.replyToken, _this.event_cache)
+        // debuglog("addReplyToken1", _this.replyToken, _this.event_cache)
         this.timer = setTimeout(function () {
-            // console.log("addReplyToken2", _this.replyToken)
+            // debuglog("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
                 var r = (' ' + _this.replyToken).slice(1);
                 _this.replyToken = null;
                 _this.reply(r, _this.event_cache);
             }
             else if (_this.replyToken !== null) {
-                console.log("wait for 2 seconds let will make replyToken no use, clean the replytoken");
+                debuglog("wait for 2 seconds let will make replyToken no use, clean the replytoken");
             }
             _this.replyToken = null;
             _this.event_cache = [];
         }, 2000);
     };
     LineConnector.prototype.dispatch = function (body, res) {
-        var _this = this;
-        console.log("dispatch");
+        var _this_1 = this;
+        debuglog("dispatch");
         var _this = this;
         if (!body || !body.events) {
-            console.log("dispatch return");
+            debuglog("dispatch return");
             return;
         }
-        body.events.forEach(function (event) { return __awaiter(_this, void 0, void 0, function () {
+        body.events.forEach(function (event) { return __awaiter(_this_1, void 0, void 0, function () {
             var m, r, e_1, message, data;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log("event", event);
+                        debuglog("event", event);
                         _this.addReplyToken(event.replyToken);
                         m = {
                             timestamp: new Date(parseInt(event.timestamp)).toISOString(),
@@ -246,7 +247,7 @@ var LineConnector = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         e_1 = _a.sent();
-                        console.log(e_1);
+                        debuglog(e_1);
                         return [3 /*break*/, 4];
                     case 4:
                         switch (event.type) {
@@ -325,7 +326,7 @@ var LineConnector = /** @class */ (function () {
                                 throw new Error("Unknown event: " + JSON.stringify(event));
                                 break;
                         }
-                        // console.log("m", m)
+                        // debuglog("m", m)
                         _this.handler([m]);
                         return [2 /*return*/];
                 }
@@ -337,7 +338,7 @@ var LineConnector = /** @class */ (function () {
     };
     ;
     LineConnector.createMessages = function (message) {
-        // console.log(message)
+        // debuglog(message)
         if (typeof message === 'string') {
             return [{ type: 'text', text: message }];
         }
@@ -352,18 +353,18 @@ var LineConnector = /** @class */ (function () {
         return [message];
     };
     LineConnector.prototype.post = function (path, body) {
-        console.log("post", path, body);
-        // console.log(path, body)
+        debuglog("post", path, body);
+        // debuglog(path, body)
         // let r;
         // try {
         //     r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
         // } catch (er) {
-        //     console.log("er",er)
+        //     debuglog("er",er)
         // }
         return fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
     };
     LineConnector.prototype.get = function (path) {
-        // console.log("get", path);
+        // debuglog("get", path);
         return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
     };
     LineConnector.prototype.reply = function (replyToken, message) {
@@ -372,7 +373,7 @@ var LineConnector = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log("reply");
+                        debuglog("reply");
                         m = LineConnector.createMessages(message);
                         body = {
                             replyToken: replyToken,
@@ -446,7 +447,7 @@ var LineConnector = /** @class */ (function () {
                         }
                         url = "/" + (this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : "") + "/" + this.conversationId + "/members/ids";
                         return [4 /*yield*/, this.get(url).then()
-                            // console.log(res)
+                            // debuglog(res)
                         ];
                     case 1:
                         res = _a.sent();
@@ -514,7 +515,7 @@ var LineConnector = /** @class */ (function () {
     };
     LineConnector.prototype.getRenderTemplate = function (event) {
         var _this = this;
-        // console.log("getRenderTemplate", event)
+        // debuglog("getRenderTemplate", event)
         //20170825 should be there
         var getButtonTemp = function (b) {
             if (b.type === 'postBack') {
@@ -532,7 +533,7 @@ var LineConnector = /** @class */ (function () {
                 };
             }
             else if (b.type === 'datatimepicker') {
-                // console.log("datatimepicker", b)
+                // debuglog("datatimepicker", b)
                 var p = {
                     "type": "datetimepicker",
                     "label": b.title,
@@ -561,7 +562,7 @@ var LineConnector = /** @class */ (function () {
         var getAltText = function (s) {
             return s.substring(0, 400);
         };
-        // console.log("event", event)
+        // debuglog("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
@@ -682,7 +683,7 @@ var LineConnector = /** @class */ (function () {
                         }
                     }
                     return event.attachments.map(function (a) {
-                        // console.log("a", a)
+                        // debuglog("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId };
@@ -773,14 +774,14 @@ var LineConnector = /** @class */ (function () {
         // let ts = [];
         var _this = this;
         messages.map(function (e, i) {
-            // console.log("e", e)
+            // debuglog("e", e)
             if (_this.hasPushApi) {
                 _this.conversationId = e.address.channel.id;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e));
             }
             else if (_this.replyToken) {
                 var t = _this.getRenderTemplate(e);
-                // console.log(t)
+                // debuglog(t)
                 if (Array.isArray(t)) {
                     _this.event_cache = _this.event_cache.concat(t);
                 }
@@ -800,8 +801,8 @@ var LineConnector = /** @class */ (function () {
         });
     };
     LineConnector.prototype.startConversation = function (address, callback) {
-        console.log(address);
-        console.log(callback);
+        debuglog(address);
+        debuglog(callback);
     };
     return LineConnector;
 }());

@@ -1,7 +1,8 @@
 
 const fetch = require('node-fetch');
 const crypto = require('crypto');
-var url = require('url');
+const util = require('util');
+const debuglog = util.debuglog('linebot');
 
 import bodyParser = require("body-parser");
 import * as botbuilder from "botbuilder";
@@ -17,7 +18,7 @@ export class Sticker implements botbuilder.IIsAttachment {
     }
     toAttachment(): botbuilder.IAttachment {
         // throw new Error("Method not implemented.");
-        // console.log(this.session.message)
+        // debuglog(this.session.message)
         if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
 
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
@@ -120,7 +121,7 @@ export class LineConnector implements botbuilder.IConnector {
         return hash === signature;
     }
     listen() {
-        console.log("listen")
+        debuglog("listen")
         const parser = bodyParser.json({
             verify: function (req: any, res, buf, encoding) {
                 req.rawBody = buf.toString(encoding);
@@ -145,16 +146,16 @@ export class LineConnector implements botbuilder.IConnector {
 
         const _this = this;
         _this.replyToken = replyToken;
-        // console.log("addReplyToken1", _this.replyToken, _this.event_cache)
+        // debuglog("addReplyToken1", _this.replyToken, _this.event_cache)
 
         this.timer = setTimeout(() => {
-            // console.log("addReplyToken2", _this.replyToken)
+            // debuglog("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
                 let r = (' ' + _this.replyToken).slice(1);
                 _this.replyToken = null;
                 _this.reply(r, _this.event_cache);
             } else if (_this.replyToken !== null) {
-                console.log("wait for 2 seconds let will make replyToken no use, clean the replytoken")
+                debuglog("wait for 2 seconds let will make replyToken no use, clean the replytoken")
             }
 
             _this.replyToken = null;
@@ -163,15 +164,15 @@ export class LineConnector implements botbuilder.IConnector {
         }, 2000)
     }
     private dispatch(body, res) {
-        console.log("dispatch")
+        debuglog("dispatch")
         const _this = this;
         if (!body || !body.events) {
-            console.log("dispatch return")
+            debuglog("dispatch return")
 
             return;
         }
         body.events.forEach(async event => {
-            console.log("event", event)
+            debuglog("event", event)
             _this.addReplyToken(event.replyToken)
 
             let m: any = {
@@ -233,7 +234,7 @@ export class LineConnector implements botbuilder.IConnector {
                         statusMessage: r.statusMessage
                     }
                 } catch (e) {
-                    console.log(e)
+                    debuglog(e)
 
                 }
             }
@@ -327,7 +328,7 @@ export class LineConnector implements botbuilder.IConnector {
                     throw new Error(`Unknown event: ${JSON.stringify(event)}`);
                     break;
             }
-            // console.log("m", m)
+            // debuglog("m", m)
             _this.handler([m]);
 
         })
@@ -336,7 +337,7 @@ export class LineConnector implements botbuilder.IConnector {
         this.handler = handler;
     };
     private static createMessages(message) {
-        // console.log(message)
+        // debuglog(message)
         if (typeof message === 'string') {
             return [{ type: 'text', text: message }];
         }
@@ -352,23 +353,23 @@ export class LineConnector implements botbuilder.IConnector {
         return [message];
     }
     private post(path, body) {
-        console.log("post", path, body)
+        debuglog("post", path, body)
 
-        // console.log(path, body)
+        // debuglog(path, body)
         // let r;
         // try {
         //     r = fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
         // } catch (er) {
-        //     console.log("er",er)
+        //     debuglog("er",er)
         // }
         return fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
     }
     private get(path) {
-        // console.log("get", path);
+        // debuglog("get", path);
         return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
     }
     private async reply(replyToken, message) {
-        console.log("reply")
+        debuglog("reply")
 
         let m = LineConnector.createMessages(message);
         const body = {
@@ -391,7 +392,7 @@ export class LineConnector implements botbuilder.IConnector {
             to: toId,
             messages: m
         };
-        // console.log("body", body)
+        // debuglog("body", body)
         let res = await this.post('/message/push', body).then();
         let r = res.json().then();
         if (r.message) {
@@ -419,7 +420,7 @@ export class LineConnector implements botbuilder.IConnector {
         let url = `/${this.conversationType === "group" ? "group" : this.conversationType === "room" ? "room" : ""}/${this.conversationId}/members/ids`
         // return url
         let res = await this.get(url).then()
-        // console.log(res)
+        // debuglog(res)
         let r = await res.json().then();
         if (r.message) {
             throw new Error(r.message)
@@ -464,7 +465,7 @@ export class LineConnector implements botbuilder.IConnector {
 
     private getRenderTemplate(event) {
         var _this = this;
-        // console.log("getRenderTemplate", event)
+        // debuglog("getRenderTemplate", event)
         //20170825 should be there
         let getButtonTemp = b => {
             if (b.type === 'postBack') {
@@ -481,7 +482,7 @@ export class LineConnector implements botbuilder.IConnector {
                     "uri": b.value
                 }
             } else if (b.type === 'datatimepicker') {
-                // console.log("datatimepicker", b)
+                // debuglog("datatimepicker", b)
                 let p = {
                     "type": "datetimepicker",
                     "label": b.title,
@@ -510,7 +511,7 @@ export class LineConnector implements botbuilder.IConnector {
         let getAltText = s => {
             return s.substring(0, 400)
         }
-        // console.log("event", event)
+        // debuglog("event", event)
         switch (event.type) {
             case 'message':
                 if (event.text) {
@@ -646,7 +647,7 @@ export class LineConnector implements botbuilder.IConnector {
                     }
 
                     return event.attachments.map(a => {
-                        // console.log("a", a)
+                        // debuglog("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId }
@@ -748,13 +749,13 @@ export class LineConnector implements botbuilder.IConnector {
         const _this = this;
 
         messages.map((e, i) => {
-            // console.log("e", e)
+            // debuglog("e", e)
             if (_this.hasPushApi) {
                 _this.conversationId = e.address.channel.id;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
                 let t = _this.getRenderTemplate(e)
-                // console.log(t)
+                // debuglog(t)
                 if (Array.isArray(t)) {
                     _this.event_cache = _this.event_cache.concat(t)
                 } else {
@@ -773,8 +774,8 @@ export class LineConnector implements botbuilder.IConnector {
         })
     }
     startConversation(address, callback) {
-        console.log(address);
-        console.log(callback);
+        debuglog(address);
+        debuglog(callback);
     }
 
 }
