@@ -6,6 +6,11 @@ var url = require('url');
 import bodyParser = require("body-parser");
 import * as botbuilder from "botbuilder";
 
+const VERIFY_TOKENS = [
+    '00000000000000000000000000000000',
+    'ffffffffffffffffffffffffffffffff'
+]
+
 export class Sticker implements botbuilder.IIsAttachment {
     packageId;
     stickerId;
@@ -172,6 +177,10 @@ export class LineConnector implements botbuilder.IConnector {
         }
         body.events.forEach(async event => {
             console.log("event", event)
+            if (VERIFY_TOKENS.indexOf(event.replyToken) !== -1) {
+                return;
+            }
+
             _this.addReplyToken(event.replyToken)
 
             let m: any = {
@@ -743,14 +752,19 @@ export class LineConnector implements botbuilder.IConnector {
                 }
         }
     }
-    send(messages, done) {
+    send(messages: botbuilder.IMessage[], done) {
         // let ts = [];
         const _this = this;
 
-        messages.map((e, i) => {
+        messages.map((e: botbuilder.IMessage, i) => {
             // console.log("e", e)
+            const address = e.address;
+            if (e.type === 'endOfConversation') {
+                return address;
+            }
+            
             if (_this.hasPushApi) {
-                _this.conversationId = e.address.channel.id;
+                _this.conversationId = e.address.channelId;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
                 let t = _this.getRenderTemplate(e)
