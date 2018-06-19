@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -40,6 +40,10 @@ var crypto = require('crypto');
 var url = require('url');
 var bodyParser = require("body-parser");
 var botbuilder = require("botbuilder");
+var VERIFY_TOKENS = [
+    '00000000000000000000000000000000',
+    'ffffffffffffffffffffffffffffffff'
+];
 var Sticker = /** @class */ (function () {
     function Sticker(session, packageId, stickerId) {
         this.packageId = packageId.toString();
@@ -129,7 +133,7 @@ var LineConnector = /** @class */ (function () {
         return hash === signature;
     };
     LineConnector.prototype.listen = function () {
-        var _this = this;
+        var _this_1 = this;
         console.log("listen");
         var parser = bodyParser.json({
             verify: function (req, res, buf, encoding) {
@@ -141,7 +145,7 @@ var LineConnector = /** @class */ (function () {
                 // if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
                 //     return res.sendStatus(400);
                 // }
-                _this.dispatch(req.body, res);
+                _this_1.dispatch(req.body, res);
                 return res.json({});
             });
         };
@@ -173,19 +177,22 @@ var LineConnector = /** @class */ (function () {
         }, 2000);
     };
     LineConnector.prototype.dispatch = function (body, res) {
-        var _this = this;
+        var _this_1 = this;
         console.log("dispatch");
         var _this = this;
         if (!body || !body.events) {
             console.log("dispatch return");
             return;
         }
-        body.events.forEach(function (event) { return __awaiter(_this, void 0, void 0, function () {
+        body.events.forEach(function (event) { return __awaiter(_this_1, void 0, void 0, function () {
             var m, r, e_1, message, data;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         console.log("event", event);
+                        if (VERIFY_TOKENS.indexOf(event.replyToken) !== -1) {
+                            return [2 /*return*/];
+                        }
                         _this.addReplyToken(event.replyToken);
                         m = {
                             timestamp: new Date(parseInt(event.timestamp)).toISOString(),
@@ -774,8 +781,12 @@ var LineConnector = /** @class */ (function () {
         var _this = this;
         messages.map(function (e, i) {
             // console.log("e", e)
+            var address = e.address;
+            if (e.type === 'endOfConversation') {
+                return address;
+            }
             if (_this.hasPushApi) {
-                _this.conversationId = e.address.channel.id;
+                _this.conversationId = e.address.channelId;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e));
             }
             else if (_this.replyToken) {
