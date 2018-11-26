@@ -21,6 +21,7 @@ LINE Messaging API for Node.js
 Please refer to the official API documents for details.
 - Developer Documents - https://developers.line.me/messaging-api/overview
 - API Reference - https://devdocs.line.me/en/#messaging-api
+- Messaging API SDKs - https://developers.line.biz/en/docs/messaging-api/line-bot-sdk/
 
 # Installation
 
@@ -243,8 +244,7 @@ The MIT license
 
 [npm-url]: https://www.npmjs.com/package/botbuilder-linebot-connector
 
-# Messaging API SDKs
-[line-bot-sdk]: https://developers.line.biz/en/docs/messaging-api/line-bot-sdk/
+
 
 
 #If you like this, Welcome to give me Star
