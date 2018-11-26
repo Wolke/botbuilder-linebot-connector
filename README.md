@@ -243,4 +243,8 @@ The MIT license
 
 [npm-url]: https://www.npmjs.com/package/botbuilder-linebot-connector
 
+# Messaging API SDKs
+[line-bot-sdk]: https://developers.line.biz/en/docs/messaging-api/line-bot-sdk/
+
+
 #If you like this, Welcome to give me Star
