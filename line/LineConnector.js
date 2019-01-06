@@ -717,7 +717,7 @@ var LineConnector = /** @class */ (function () {
                                     return {
                                         "type": "audio",
                                         "originalContentUrl": a.content.media[0].url,
-                                        "duration": 240000 || a.content.media[0].duration
+                                        "duration": a.content.media[0].duration || 240000
                                     };
                                 }
                                 else {

@@ -687,7 +687,7 @@ export class LineConnector implements botbuilder.IConnector {
                                     return {
                                         "type": "audio",
                                         "originalContentUrl": a.content.media[0].url,
-                                        "duration": 240000 || a.content.media[0].duration
+                                        "duration": a.content.media[0].duration || 240000
                                     }
                                 } else {
                                     return new Error("need image and media")
