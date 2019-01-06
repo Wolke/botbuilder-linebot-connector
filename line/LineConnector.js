@@ -389,6 +389,7 @@ var LineConnector = /** @class */ (function () {
                     case 1:
                         res = _a.sent();
                         r = res.json().then();
+                        console.log(r);
                         if (r.message) {
                             throw new Error(r.message);
                         }
@@ -412,6 +413,7 @@ var LineConnector = /** @class */ (function () {
                     case 1:
                         res = _a.sent();
                         r = res.json().then();
+                        console.log(r);
                         if (r.message) {
                             throw new Error(r.message);
                         }

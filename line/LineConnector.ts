@@ -387,6 +387,7 @@ export class LineConnector implements botbuilder.IConnector {
 
         let res = await this.post('/message/reply', body).then();
         let r = res.json().then();
+        console.log(r)
         if (r.message) {
             throw new Error(r.message)
         }
@@ -403,6 +404,7 @@ export class LineConnector implements botbuilder.IConnector {
         // console.log("body", body)
         let res = await this.post('/message/push', body).then();
         let r = res.json().then();
+        console.log(r)
         if (r.message) {
             throw new Error(r.message)
         }
