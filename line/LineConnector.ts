@@ -687,7 +687,7 @@ export class LineConnector implements botbuilder.IConnector {
                                     return {
                                         "type": "audio",
                                         "originalContentUrl": a.content.media[0].url,
-                                        "duration": 240000
+                                        "duration": 240000 || a.content.media[0].duration
                                     }
                                 } else {
                                     return new Error("need image and media")
@@ -762,7 +762,7 @@ export class LineConnector implements botbuilder.IConnector {
             if (e.type === 'endOfConversation') {
                 return address;
             }
-            
+
             if (_this.hasPushApi) {
                 _this.conversationId = e.address.channelId;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))

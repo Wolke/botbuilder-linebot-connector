@@ -86,7 +86,7 @@ bot.dialog("ask", [
             q.options
         );
     },
-    (s, r) => {
+    (s: any, r) => {
         s.dialogData.answers = [];
         if (r.response.entity === s.dialogData.q.a) {
             s.send(`${s.message.from.name} 答對了! 加一分！`)
