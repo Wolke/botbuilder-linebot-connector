@@ -375,7 +375,7 @@ var LineConnector = /** @class */ (function () {
     };
     LineConnector.prototype.reply = function (replyToken, message) {
         return __awaiter(this, void 0, void 0, function () {
-            var m, body, res, r;
+            var m, body, r;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -387,11 +387,9 @@ var LineConnector = /** @class */ (function () {
                         };
                         return [4 /*yield*/, this.post('/message/reply', body).then()];
                     case 1:
-                        res = _a.sent();
-                        r = res.json().then();
-                        console.log(r);
-                        if (r.message) {
-                            throw new Error(r.message);
+                        r = _a.sent();
+                        if (r.status === 400) {
+                            r.json().then(function (json) { console.log(json); throw new Error(json.toString()); });
                         }
                         return [2 /*return*/, r];
                 }
@@ -400,7 +398,7 @@ var LineConnector = /** @class */ (function () {
     };
     LineConnector.prototype.push = function (toId, message) {
         return __awaiter(this, void 0, void 0, function () {
-            var m, body, res, r;
+            var m, body, r;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -411,11 +409,10 @@ var LineConnector = /** @class */ (function () {
                         };
                         return [4 /*yield*/, this.post('/message/push', body).then()];
                     case 1:
-                        res = _a.sent();
-                        r = res.json().then();
-                        console.log(r);
-                        if (r.message) {
-                            throw new Error(r.message);
+                        r = _a.sent();
+                        // let r = await res.json().then();
+                        if (r.status === 400) {
+                            r.json().then(function (json) { console.log(json); throw new Error(json.toString()); });
                         }
                         return [2 /*return*/, r];
                 }
@@ -497,7 +494,7 @@ var LineConnector = /** @class */ (function () {
     };
     LineConnector.prototype.leave = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var url, body, res, r;
+            var url, body, r;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -511,10 +508,10 @@ var LineConnector = /** @class */ (function () {
                         };
                         return [4 /*yield*/, this.post(url, body).then()];
                     case 1:
-                        res = _a.sent();
-                        r = res.json().then();
-                        if (r.message) {
-                            throw new Error(r.message);
+                        r = _a.sent();
+                        // let r = await res.json().then();
+                        if (r.status === 400) {
+                            r.json().then(function (json) { console.log(json); throw new Error(json.toString()); });
                         }
                         return [2 /*return*/, r];
                 }
@@ -670,7 +667,7 @@ var LineConnector = /** @class */ (function () {
                                         columns: event.attachments.map(function (a) {
                                             var c = {
                                                 title: a.content.title || "",
-                                                text: "" + (a.content.title || "") + (a.content.subtitle || ""),
+                                                text: getAltText(event.attachments[0].content.text),
                                                 actions: a.content.buttons.map(function (b) {
                                                     return getButtonTemp(b);
                                                 })

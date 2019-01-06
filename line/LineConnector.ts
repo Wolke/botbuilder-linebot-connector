@@ -385,11 +385,11 @@ export class LineConnector implements botbuilder.IConnector {
             messages: m
         };
 
-        let res = await this.post('/message/reply', body).then();
-        let r = res.json().then();
-        console.log(r)
-        if (r.message) {
-            throw new Error(r.message)
+        let r = await this.post('/message/reply', body).then();
+
+        if (r.status === 400) {
+            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+
         }
         return r;
     }
@@ -402,12 +402,15 @@ export class LineConnector implements botbuilder.IConnector {
             messages: m
         };
         // console.log("body", body)
-        let res = await this.post('/message/push', body).then();
-        let r = res.json().then();
-        console.log(r)
-        if (r.message) {
-            throw new Error(r.message)
+        // let res = await this.post('/message/push', body).then();
+
+        let r = await this.post('/message/push', body).then();
+        // let r = await res.json().then();
+        if (r.status === 400) {
+            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+
         }
+
         return r;
     }
 
