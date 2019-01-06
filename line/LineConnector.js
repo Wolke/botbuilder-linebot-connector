@@ -162,6 +162,7 @@ var LineConnector = /** @class */ (function () {
         var _this = this;
         _this.replyToken = replyToken;
         // console.log("addReplyToken1", _this.replyToken, _this.event_cache)
+        clearTimeout(this.timer);
         this.timer = setTimeout(function () {
             // console.log("addReplyToken2", _this.replyToken)
             if (_this.replyToken && _this.event_cache.length > 0) {
