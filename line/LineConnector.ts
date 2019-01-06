@@ -464,10 +464,11 @@ export class LineConnector implements botbuilder.IConnector {
             replyToken: this.replyToken,
         };
 
-        let res = await this.post(url, body).then();
-        let r = res.json().then();
-        if (r.message) {
-            throw new Error(r.message)
+        let r = await this.post(url, body).then();
+        // let r = await res.json().then();
+        if (r.status === 400) {
+            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+
         }
         return r;
     }
@@ -625,7 +626,7 @@ export class LineConnector implements botbuilder.IConnector {
                                         columns: event.attachments.map(a => {
                                             let c: any = {
                                                 title: a.content.title || "",
-                                                text: `${a.content.title || ""}${a.content.subtitle || ""}`,
+                                                text: getAltText(event.attachments[0].content.text),
                                                 actions: a.content.buttons.map(b =>
                                                     getButtonTemp(b)
                                                 )
