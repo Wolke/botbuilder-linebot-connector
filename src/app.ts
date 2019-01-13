@@ -1,6 +1,7 @@
 var express = require('express');
 import * as builder from "botbuilder";
 import { LineConnector, Sticker, Location, ImageMap } from "./line/LineConnector"
+// var LineConnector = require("./../index");
 import { CardAction } from "botbuilder";
 
 // var config = require("./conf").default
@@ -120,8 +121,9 @@ var a = {
 }
 var reply = new builder.Message()
     .address(<any>a)
+    // .addAttachment(new Sticker(1, 1))
     // .text("hello2")
-    .addAttachment(new ImageMap(<any>a,
+    .addAttachment(new ImageMap(
         "test",
         "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
         {

@@ -5,100 +5,110 @@ const crypto = require('crypto');
 var url = require('url');
 // import bodyParser from "body-parser";
 var bodyParser = require('body-parser');
-const botbuilder = require("botbuilder");
 const VERIFY_TOKENS = [
     '00000000000000000000000000000000',
     'ffffffffffffffffffffffffffffffff'
 ];
 class ImageMap {
-    constructor(session, text, baseUrl, baseSize, actions) {
-        this.session = session;
+    constructor(text, baseUrl, baseSize, actions) {
+        // this.address = address;
         this.text = text;
         this.baseUrl = baseUrl;
         this.baseSize = baseSize;
         this.actions = actions;
     }
     toAttachment() {
+        return {
+            contentType: "imagemap",
+            content: {
+                baseUrl: this.baseUrl,
+                baseSize: this.baseSize,
+                actions: this.actions,
+                text: this.text
+            }
+        };
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        let address = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))) {
-            return {
-                contentType: "imagemap",
-                content: {
-                    baseUrl: this.baseUrl,
-                    baseSize: this.baseSize,
-                    actions: this.actions,
-                    text: this.text
-                }
-            };
-        }
-        else {
-            // throw new Error("Method not implemented.");
-            return new botbuilder.MediaCard().text("this is a image map!!").toAttachment();
-        }
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
+        //     return {
+        //         contentType: "imagemap",
+        //         content: {
+        //             baseUrl: this.baseUrl,
+        //             baseSize: this.baseSize,
+        //             actions: this.actions,
+        //             text: this.text
+        //         }
+        //     }
+        // } else {
+        //     // throw new Error("Method not implemented.");
+        //     return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
+        // }
     }
 }
 exports.ImageMap = ImageMap;
 class Sticker {
-    constructor(session, packageId, stickerId) {
+    // session: botbuilder.Session;
+    constructor(packageId, stickerId) {
         this.packageId = packageId.toString();
         this.stickerId = stickerId.toString();
-        this.session = session;
+        // this.address = address;
     }
     toAttachment() {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        let address = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))) {
-            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
-            return {
-                contentType: "sticker",
-                content: {
-                    packageId: this.packageId,
-                    stickerId: this.stickerId
-                }
-            };
-        }
-        else {
-            // throw new Error("Method not implemented.");
-            return new botbuilder.MediaCard().text("this is a sticker!!").toAttachment();
-        }
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
+        // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        return {
+            contentType: "sticker",
+            content: {
+                packageId: this.packageId,
+                stickerId: this.stickerId
+            }
+        };
+        // } else {
+        //     // throw new Error("Method not implemented.");
+        //     return new botbuilder.MediaCard().text("this is a sticker!!").toAttachment()
+        // }
     }
 }
 exports.Sticker = Sticker;
 class Location {
-    constructor(session, title, address_or_desc, latitude, longitude) {
-        this.session = session;
+    constructor(title, address_or_desc, latitude, longitude) {
+        // this.address = address;
         this.title = title;
-        this.address = address_or_desc;
+        this.location_address = address_or_desc;
         this.latitude = latitude;
         this.longitude = longitude;
     }
     toAttachment() {
-        let address = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))) {
-            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
-            return {
-                contentType: "location",
-                content: {
-                    title: this.title,
-                    address: this.address,
-                    latitude: this.latitude,
-                    longitude: this.longitude
-                }
-            };
-        }
-        else {
-            // throw new Error("Method not implemented.");
-            return new botbuilder.MediaCard().text(`this is a location!! ${this.address}`).toAttachment();
-        }
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
+        // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        return {
+            contentType: "location",
+            content: {
+                title: this.title,
+                address: this.location_address,
+                latitude: this.latitude,
+                longitude: this.longitude
+            }
+            // }
+            // } else {
+            //     // throw new Error("Method not implemented.");
+            //     return new botbuilder.MediaCard().text(`this is a location!! ${this.location_address}`).toAttachment()
+            // }
+        };
     }
 }
 exports.Location = Location;
@@ -662,7 +672,7 @@ class LineConnector {
                                 return {
                                     type: 'location',
                                     title: a.content.title,
-                                    address: a.content.address,
+                                    address: a.content.location_address,
                                     latitude: a.content.latitude,
                                     longitude: a.content.longitude
                                 };

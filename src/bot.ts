@@ -55,7 +55,7 @@ bot.on('conversationUpdate', function (message) {
 });
 
 bot.dialog("start", s => {
-    s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 2)));
+    // s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 2)));
     s.send("遊戲開始")
     s.beginDialog("ask");
 })
@@ -90,11 +90,11 @@ bot.dialog("ask", [
         s.dialogData.answers = [];
         if (r.response.entity === s.dialogData.q.a) {
             s.send(`${s.message.from.name} 答對了! 加一分！`)
-            s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 2)));
+            // s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 2)));
             s.dialogData.q = null
         } else {
             s.send(`${s.message.from.name} 答錯了! 扣一分！`)
-            s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 3)));
+            // s.send(new builder.Message(s).addAttachment(new Sticker(s, 1, 3)));
         }
         s.replaceDialog("ask", { q: s.dialogData.q })
     }

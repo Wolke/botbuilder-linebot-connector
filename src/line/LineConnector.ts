@@ -14,7 +14,7 @@ const VERIFY_TOKENS = [
 ]
 export class ImageMap implements botbuilder.IIsAttachment {
     // session: botbuilder.Session;
-    address: botbuilder.IAddress
+    // address: botbuilder.IAddress
     text: string;
     baseUrl: string;
     baseSize: { width: number, height: number }
@@ -30,7 +30,7 @@ export class ImageMap implements botbuilder.IIsAttachment {
             height: number
         }
     }>
-    constructor(address: botbuilder.IAddress, text: string, baseUrl: string, baseSize: { width: number, height: number }, actions: Array<{
+    constructor(text: string, baseUrl: string, baseSize: { width: number, height: number }, actions: Array<{
         type: string,
         linkUri?: string,
         label?: string,
@@ -42,7 +42,7 @@ export class ImageMap implements botbuilder.IIsAttachment {
             height: number
         }
     }>) {
-        this.address = address;
+        // this.address = address;
         this.text = text;
         this.baseUrl = baseUrl;
         this.baseSize = baseSize;
@@ -84,14 +84,14 @@ export class ImageMap implements botbuilder.IIsAttachment {
 }
 
 export class Sticker implements botbuilder.IIsAttachment {
-    address: botbuilder.IAddress
+    // address: botbuilder.IAddress
     packageId: string;
     stickerId: string;
     // session: botbuilder.Session;
-    constructor(address: botbuilder.IAddress, packageId: number, stickerId: number) {
+    constructor(packageId: number, stickerId: number) {
         this.packageId = packageId.toString();
         this.stickerId = stickerId.toString();
-        this.address = address;
+        // this.address = address;
     }
     toAttachment(): botbuilder.IAttachment {
         // throw new Error("Method not implemented.");
@@ -121,13 +121,13 @@ export class Sticker implements botbuilder.IIsAttachment {
 
 export class Location implements botbuilder.IIsAttachment {
     // session: botbuilder.Session;
-    address: botbuilder.IAddress
+    // address: botbuilder.IAddress
     title: string;
     location_address: string;
     latitude: number;
     longitude: number;
-    constructor(address: botbuilder.IAddress, title: string, address_or_desc: string, latitude: number, longitude: number) {
-        this.address = address;
+    constructor(title: string, address_or_desc: string, latitude: number, longitude: number) {
+        // this.address = address;
         this.title = title;
         this.location_address = address_or_desc;
         this.latitude = latitude;
