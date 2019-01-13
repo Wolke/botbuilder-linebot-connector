@@ -75,6 +75,19 @@ server.post('/line', connector.listen());
 
 var bot = new builder.UniversalBot(connector)
 
+var push = new builder.Message()
+    .address(<any>a)
+    .addAttachment(new ImageMap(<any>a,
+        "test",
+        "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+        {
+            "width": 1040,
+            "height": 1040
+        },
+        []
+    ))
+bot.send(push);
+
 bot.dialog("/", s => {
             try{
                 let u = await connector.getUserProfile(s.message.from.id)

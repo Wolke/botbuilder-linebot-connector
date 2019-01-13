@@ -13,7 +13,8 @@ const VERIFY_TOKENS = [
     'ffffffffffffffffffffffffffffffff'
 ]
 export class ImageMap implements botbuilder.IIsAttachment {
-    session: botbuilder.Session;
+    // session: botbuilder.Session;
+    address: botbuilder.IAddress
     text: string;
     baseUrl: string;
     baseSize: { width: number, height: number }
@@ -29,7 +30,7 @@ export class ImageMap implements botbuilder.IIsAttachment {
             height: number
         }
     }>
-    constructor(session: botbuilder.Session, text: string, baseUrl: string, baseSize: { width: number, height: number }, actions: Array<{
+    constructor(address: botbuilder.IAddress, text: string, baseUrl: string, baseSize: { width: number, height: number }, actions: Array<{
         type: string,
         linkUri?: string,
         label?: string,
@@ -41,110 +42,121 @@ export class ImageMap implements botbuilder.IIsAttachment {
             height: number
         }
     }>) {
-        this.session = session;
+        this.address = address;
         this.text = text;
         this.baseUrl = baseUrl;
         this.baseSize = baseSize;
         this.actions = actions;
     }
     toAttachment(): botbuilder.IAttachment {
+        return {
+            contentType: "imagemap",
+            content: {
+                baseUrl: this.baseUrl,
+                baseSize: this.baseSize,
+                actions: this.actions,
+                text: this.text
+            }
+        }
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        let address: any = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))
-        ) {
-            return {
-                contentType: "imagemap",
-                content: {
-                    baseUrl: this.baseUrl,
-                    baseSize: this.baseSize,
-                    actions: this.actions,
-                    text: this.text
-                }
-            }
-        } else {
-            // throw new Error("Method not implemented.");
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
+        //     return {
+        //         contentType: "imagemap",
+        //         content: {
+        //             baseUrl: this.baseUrl,
+        //             baseSize: this.baseSize,
+        //             actions: this.actions,
+        //             text: this.text
+        //         }
+        //     }
+        // } else {
+        //     // throw new Error("Method not implemented.");
 
-            return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
-        }
+        //     return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
+        // }
 
     }
 }
 
 export class Sticker implements botbuilder.IIsAttachment {
+    address: botbuilder.IAddress
     packageId: string;
     stickerId: string;
-    session: botbuilder.Session;
-    constructor(session: botbuilder.Session, packageId: number, stickerId: number) {
+    // session: botbuilder.Session;
+    constructor(address: botbuilder.IAddress, packageId: number, stickerId: number) {
         this.packageId = packageId.toString();
         this.stickerId = stickerId.toString();
-        this.session = session;
+        this.address = address;
     }
     toAttachment(): botbuilder.IAttachment {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        let address: any = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))
-        ) {
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
 
-            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
-            return {
-                contentType: "sticker",
-                content: {
-                    packageId: this.packageId,
-                    stickerId: this.stickerId
-                }
+        // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        return {
+            contentType: "sticker",
+            content: {
+                packageId: this.packageId,
+                stickerId: this.stickerId
             }
-        } else {
-            // throw new Error("Method not implemented.");
-
-            return new botbuilder.MediaCard().text("this is a sticker!!").toAttachment()
         }
+        // } else {
+        //     // throw new Error("Method not implemented.");
+
+        //     return new botbuilder.MediaCard().text("this is a sticker!!").toAttachment()
+        // }
 
     }
 }
 
 export class Location implements botbuilder.IIsAttachment {
-    session: botbuilder.Session;
+    // session: botbuilder.Session;
+    address: botbuilder.IAddress
     title: string;
-    address: string;
+    location_address: string;
     latitude: number;
     longitude: number;
-    constructor(session: botbuilder.Session, title: string, address_or_desc: string, latitude: number, longitude: number) {
-        this.session = session;
+    constructor(address: botbuilder.IAddress, title: string, address_or_desc: string, latitude: number, longitude: number) {
+        this.address = address;
         this.title = title;
-        this.address = address_or_desc;
+        this.location_address = address_or_desc;
         this.latitude = latitude;
         this.longitude = longitude;
     }
     toAttachment(): botbuilder.IAttachment {
-        let address: any = this.session.message.address;
-        if (this.session.message &&
-            ((this.session.message.source && this.session.message.source === "line") ||
-                (address.channel.source && address.channel.source === "line"))
-        ) {
-            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
-            return {
-                contentType: "location",
-                content: {
-                    title: this.title,
-                    address: this.address,
-                    latitude: this.latitude,
-                    longitude: this.longitude
-                }
+        // let address: any = this.session.message.address;
+        // if (this.session.message &&
+        //     ((this.session.message.source && this.session.message.source === "line") ||
+        //         (address.channel.source && address.channel.source === "line"))
+        // ) {
+        // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        return {
+            contentType: "location",
+            content: {
+                title: this.title,
+                address: this.location_address,
+                latitude: this.latitude,
+                longitude: this.longitude
             }
-        } else {
-            // throw new Error("Method not implemented.");
+            // }
+            // } else {
+            //     // throw new Error("Method not implemented.");
 
-            return new botbuilder.MediaCard().text(`this is a location!! ${this.address}`).toAttachment()
+            //     return new botbuilder.MediaCard().text(`this is a location!! ${this.location_address}`).toAttachment()
+            // }
         }
     }
 }
-
 export class LineConnector implements botbuilder.IConnector {
     //const
     headers: any;
@@ -802,7 +814,7 @@ export class LineConnector implements botbuilder.IConnector {
                                 return {
                                     type: 'location',
                                     title: a.content.title,
-                                    address: a.content.address,
+                                    address: a.content.location_address,
 
                                     latitude: a.content.latitude,
                                     longitude: a.content.longitude

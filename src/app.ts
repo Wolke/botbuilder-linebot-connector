@@ -25,10 +25,8 @@ var bot = new builder.UniversalBot(connector)
 
 bot.dialog('/', [
     s => {
-        var reply = new builder.Message()
-            .address(s.message.address)
-            .text("hello");
-        bot.send(reply);
+        // console.log(s.message.address)
+
         // s.message.address
         // s.send(s.message.text)
         // s.send(new builder.Message(s).addAttachment(new ImageMap(s,
@@ -111,3 +109,25 @@ bot.dialog("hello", [
         s.endDialog()
     }
 ])
+
+
+
+var a = {
+    conversation: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
+    channel: { id: 'U4d84576ad6728b67714cfef79650e6fb', source: 'line' },
+    user: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
+    channelId: 'U4d84576ad6728b67714cfef79650e6fb'
+}
+var reply = new builder.Message()
+    .address(<any>a)
+    // .text("hello2")
+    .addAttachment(new ImageMap(<any>a,
+        "test",
+        "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+        {
+            "width": 1040,
+            "height": 1040
+        },
+        []
+    ))
+bot.send(reply);
