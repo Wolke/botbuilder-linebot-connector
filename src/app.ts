@@ -11,11 +11,11 @@ server.listen(process.env.port || process.env.PORT || 3000, function () {
 });
 
 var connector = new LineConnector({
-    hasPushApi: false, //you need to pay push api >.,<
+    hasPushApi: true, //you need to pay push api >.,<
     autoGetUserProfile: true,
-    channelId: "1489577982",
-    channelSecret: "1752cff54cf3db3a9f4a4bdd6165a18c",
-    channelAccessToken: "W5cNdbwKSLS86soxGjnxpzIPZgm3orCWVZuOkU5YBVqZ6nFctxxZLYE9a5UWJ9gL5yz0lnEnH9tld/B8e49PPRQEhyMnBnxUmPr6hXvxId0zrj4S675kQIjsVlkzY97ShKM+kyXAkpqRS2ZcAQkMVwdB04t89/1O/w1cDnyilFU="
+    channelId: "1619224714",
+    channelSecret: "559047bbef9fb95ee17aecb28901772b",
+    channelAccessToken: "BDQorhMkgNRKFiCe7VFjEIirL3EOi+s9ZenYRmYupSSyUJSoZwxUKPIFlSKZfv3QOYwD73aUFTIZ6AmGZ3YkM9d+ChZKOKp8CYoaZZot3eNhuZyAumEUy5tN5pWYbQs/oz6g8ZTGK7ko/fi87stCUgdB04t89/1O/w1cDnyilFU="
 });
 
 server.post('/line', connector.listen());
@@ -25,40 +25,45 @@ var bot = new builder.UniversalBot(connector)
 
 bot.dialog('/', [
     s => {
+        var reply = new builder.Message()
+            .address(s.message.address)
+            .text("hello");
+        bot.send(reply);
+        // s.message.address
         // s.send(s.message.text)
-        s.send(new builder.Message(s).addAttachment(new ImageMap(s,
-            "test",
-            "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
-            {
-                "width": 1040,
-                "height": 1040
-            },
-            [
-                {
-                    "type": "uri",
-                    "linkUri": "https://google.com/",
-                    "area": {
-                        "x": 0,
-                        "y": 0,
-                        "width": 333,
-                        "height": 1040
-                    }
-                },
-                {
-                    "type": "message",
-                    "label": "good",
-                    "text": "hot",
-                    "area": {
-                        "x": 333,
-                        "y": 0,
-                        "width": 333,
-                        "height": 1040
-                    }
-                },
-            ]
+        // s.send(new builder.Message(s).addAttachment(new ImageMap(s,
+        //     "test",
+        //     "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+        //     {
+        //         "width": 1040,
+        //         "height": 1040
+        //     },
+        //     [
+        //         {
+        //             "type": "uri",
+        //             "linkUri": "https://google.com/",
+        //             "area": {
+        //                 "x": 0,
+        //                 "y": 0,
+        //                 "width": 333,
+        //                 "height": 1040
+        //             }
+        //         },
+        //         {
+        //             "type": "message",
+        //             "label": "good",
+        //             "text": "hot",
+        //             "area": {
+        //                 "x": 333,
+        //                 "y": 0,
+        //                 "width": 333,
+        //                 "height": 1040
+        //             }
+        //         },
+        //     ]
 
 
-        )));
+        // )));
 
     }
 ]);

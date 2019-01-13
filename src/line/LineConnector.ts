@@ -267,6 +267,8 @@ export class LineConnector implements botbuilder.IConnector {
                     m.address.conversation.name = "user";
                     m.address.conversation.id = event.source.userId;
                     m.address.channel.id = event.source.userId;
+                    m.address.channelId = event.source.userId;
+
                     m.address.channel.source = "line";
                     m.address.user.name = "user";
                     m.address.user.id = event.source.userId;
@@ -279,6 +281,8 @@ export class LineConnector implements botbuilder.IConnector {
                     m.address.conversation.isGroup = true;
 
                     m.address.channel.id = event.source.groupId;
+                    m.address.channelId = event.source.userId;
+
                     m.address.user.name = "group";
                     m.address.user.id = event.source.groupId;
                     _this.conversationId = event.source.groupId;
@@ -291,6 +295,8 @@ export class LineConnector implements botbuilder.IConnector {
                     m.address.conversation.isGroup = true;
 
                     m.address.channel.id = event.source.roomId;
+                    m.address.channelId = event.source.userId;
+
                     m.address.user.name = "room";
                     m.address.user.id = event.source.roomId;
                     _this.conversationId = event.source.roomId;

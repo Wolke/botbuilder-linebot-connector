@@ -1,5 +1,5 @@
 exports.default = {
-    channelId: "1579199289",
-    channelSecret: "9c1d004121867cd188e4e62d0a3aabe6",
-    channelAccessToken: "XfNE40U2MPhO33xTY/SpC5IwASt2jxxRW6W6VAmN+89Ol3o2iVMm57fgkiYyY/ilxGo4yEctF1Bg3UFX9GirFN+OmfivqcbMQl0XL3U2tiiI2Lz5ONjM1jXkOi/m7/XcabMtKjoFsgKFkt1PqL6ZaQdB04t89/1O/w1cDnyilFU="
+    channelId: "1619224714",
+    channelSecret: "559047bbef9fb95ee17aecb28901772b",
+    channelAccessToken: "BDQorhMkgNRKFiCe7VFjEIirL3EOi+s9ZenYRmYupSSyUJSoZwxUKPIFlSKZfv3QOYwD73aUFTIZ6AmGZ3YkM9d+ChZKOKp8CYoaZZot3eNhuZyAumEUy5tN5pWYbQs/oz6g8ZTGK7ko/fi87stCUgdB04t89/1O/w1cDnyilFU="
 }

@@ -17,11 +17,11 @@
             "request": "launch",
             "name": "Debug TypeScript in Node.js",
             "preLaunchTask": "typescript",
-            "program": "${workspaceFolder}/app.ts",
+            "program": "${workspaceFolder}/src/app.ts",
             "cwd": "${workspaceFolder}",
             "protocol": "inspector",
             "outFiles": [
-                "${workspaceFolder}/*.js"
+                "${workspaceFolder}/bin/*.js"
             ]
         },
     ]
