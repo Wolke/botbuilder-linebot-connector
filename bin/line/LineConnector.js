@@ -3,24 +3,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fetch = require('node-fetch');
 const crypto = require('crypto');
 var url = require('url');
-const bodyParser = require("body-parser");
+// import bodyParser from "body-parser";
+var bodyParser = require('body-parser');
 const botbuilder = require("botbuilder");
 const VERIFY_TOKENS = [
     '00000000000000000000000000000000',
     'ffffffffffffffffffffffffffffffff'
 ];
 class ImageMap {
-    constructor(session) {
+    constructor(session, text, baseUrl, baseSize, actions) {
         this.session = session;
+        this.text = text;
+        this.baseUrl = baseUrl;
+        this.baseSize = baseSize;
+        this.actions = actions;
     }
     toAttachment() {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
-            // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
+        let address = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))) {
             return {
                 contentType: "imagemap",
-                content: {}
+                content: {
+                    baseUrl: this.baseUrl,
+                    baseSize: this.baseSize,
+                    actions: this.actions,
+                    text: this.text
+                }
             };
         }
         else {
@@ -39,7 +51,10 @@ class Sticker {
     toAttachment() {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+        let address = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))) {
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "sticker",
@@ -65,7 +80,10 @@ class Location {
         this.longitude = longitude;
     }
     toAttachment() {
-        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+        let address = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))) {
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "location",
@@ -348,7 +366,7 @@ class LineConnector {
         };
         let r = await this.post('/message/reply', body).then();
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()); });
+            r.json().then((json) => { console.log(json); throw new Error(json.toString()); });
         }
         return r;
     }
@@ -363,7 +381,7 @@ class LineConnector {
         let r = await this.post('/message/push', body).then();
         // let r = await res.json().then();
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()); });
+            r.json().then((json) => { console.log(json); throw new Error(json.toString()); });
         }
         return r;
     }
@@ -418,7 +436,7 @@ class LineConnector {
         let r = await this.post(url, body).then();
         // let r = await res.json().then();
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()); });
+            r.json().then((json) => { console.log(json); throw new Error(json.toString()); });
         }
         return r;
     }
@@ -426,7 +444,7 @@ class LineConnector {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
-        let getButtonTemp = b => {
+        let getButtonTemp = (b) => {
             if (b.type === 'postBack') {
                 return {
                     "type": "postback",
@@ -468,7 +486,7 @@ class LineConnector {
                 };
             }
         };
-        let getAltText = s => {
+        let getAltText = (s) => {
             return s.substring(0, 400);
         };
         // console.log("event", event)
@@ -500,7 +518,7 @@ class LineConnector {
                                         type: "buttons",
                                         // title: event.text || "",
                                         text: `${event.text || ""}`,
-                                        actions: event.suggestedActions.actions.map(b => getButtonTemp(b))
+                                        actions: event.suggestedActions.actions.map((b) => getButtonTemp(b))
                                     }
                                 };
                         }
@@ -549,7 +567,7 @@ class LineConnector {
                                     "altText": getAltText(event.attachments[0].content.text),
                                     "template": {
                                         "type": "image_carousel",
-                                        "columns": event.attachments.map(a => {
+                                        "columns": event.attachments.map((a) => {
                                             return {
                                                 imageUrl: a.content.images[0].url,
                                                 action: getButtonTemp(a.content.buttons[0])
@@ -566,11 +584,11 @@ class LineConnector {
                                         type: "carousel",
                                         imageAspectRatio: "rectangle",
                                         imageSize: "cover",
-                                        columns: event.attachments.map(a => {
+                                        columns: event.attachments.map((a) => {
                                             let c = {
                                                 title: a.content.title || "",
                                                 text: getAltText(event.attachments[0].content.text),
-                                                actions: a.content.buttons.map(b => getButtonTemp(b))
+                                                actions: a.content.buttons.map((b) => getButtonTemp(b))
                                             };
                                             if (a.content.images) {
                                                 c.thumbnailImageUrl = a.content.images[0].url;
@@ -587,55 +605,54 @@ class LineConnector {
                             throw new Error("do not suppoert this card,only support HeroCard ");
                         }
                     }
-                    return event.attachments.map(a => {
+                    return event.attachments.map((a) => {
                         // console.log("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId };
                             case `imagemap`:
+                                let t;
+                                t = {
+                                    type: "imagemap",
+                                    baseUrl: a.content.baseUrl,
+                                    baseSize: a.content.baseSize,
+                                    altText: getAltText(a.content.text),
+                                    actions: a.content.actions
+                                };
+                                return t;
                                 return {
                                     "type": "imagemap",
-                                    "baseUrl": "http://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+                                    "baseUrl": "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
                                     "altText": "This is an imagemap",
                                     "baseSize": {
                                         "width": 1040,
-                                        "height": 1040
+                                        "height": 104
                                     },
-                                    "video": {
-                                        "originalContentUrl": "https://example.com/video.mp4",
-                                        "previewImageUrl": "http://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
-                                        "area": {
-                                            "x": 0,
-                                            "y": 0,
-                                            "width": 1040,
-                                            "height": 585
-                                        },
-                                        "externalLink": {
-                                            "linkUri": "https://example.com/see_more.html",
-                                            "label": "See More"
-                                        }
-                                    },
+                                    // "video": {
+                                    //     "originalContentUrl": "https://example.com/video.mp4",
+                                    //     "previewImageUrl": "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+                                    //     "area": {
+                                    //         "x": 0,
+                                    //         "y": 0,
+                                    //         "width": 1040,
+                                    //         "height": 585
+                                    //     },
+                                    //     "externalLink": {
+                                    //         "linkUri": "https://example.com/see_more.html",
+                                    //         "label": "See More"
+                                    //     }
+                                    // },
                                     "actions": [
                                         {
                                             "type": "uri",
-                                            "linkUri": "https://example.com/",
+                                            "linkUri": "https://google.com/",
                                             "area": {
                                                 "x": 0,
-                                                "y": 586,
-                                                "width": 520,
-                                                "height": 454
+                                                "y": 0,
+                                                "width": 1040,
+                                                "height": 104
                                             }
                                         },
-                                        {
-                                            "type": "message",
-                                            "text": "Hello",
-                                            "area": {
-                                                "x": 520,
-                                                "y": 586,
-                                                "width": 520,
-                                                "height": 454
-                                            }
-                                        }
                                     ]
                                 };
                             case 'location':
@@ -689,7 +706,7 @@ class LineConnector {
                                             type: "confirm",
                                             title: a.content.title || "",
                                             text: `${a.content.title || ""}${a.content.subtitle || ""}`,
-                                            actions: a.content.buttons.map(b => getButtonTemp(b))
+                                            actions: a.content.buttons.map((b) => getButtonTemp(b))
                                         }
                                     };
                                 }
@@ -701,7 +718,7 @@ class LineConnector {
                                             type: "buttons",
                                             title: a.content.title || "",
                                             text: `${a.content.title || ""}${a.content.subtitle || ""}`,
-                                            actions: a.content.buttons.map(b => getButtonTemp(b))
+                                            actions: a.content.buttons.map((b) => getButtonTemp(b))
                                         }
                                     };
                                     if (a.content.images) {

@@ -744,6 +744,7 @@ export class LineConnector implements botbuilder.IConnector {
                                     altText: getAltText(a.content.text),
                                     actions: a.content.actions
                                 };
+
                                 return t;
                                 return {
                                     "type": "imagemap",
