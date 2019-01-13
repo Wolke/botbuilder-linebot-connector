@@ -3,18 +3,80 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 var url = require('url');
 
-import bodyParser = require("body-parser");
+// import bodyParser from "body-parser";
+var bodyParser = require('body-parser')
+
 import * as botbuilder from "botbuilder";
 
 const VERIFY_TOKENS = [
     '00000000000000000000000000000000',
     'ffffffffffffffffffffffffffffffff'
 ]
+export class ImageMap implements botbuilder.IIsAttachment {
+    session: botbuilder.Session;
+    text: string;
+    baseUrl: string;
+    baseSize: { width: number, height: number }
+    actions: Array<{
+        type: string,
+        linkUri?: string,
+        label?: string,
+        text?: string,
+        area: {
+            x: number,
+            y: number,
+            width: number,
+            height: number
+        }
+    }>
+    constructor(session: botbuilder.Session, text: string, baseUrl: string, baseSize: { width: number, height: number }, actions: Array<{
+        type: string,
+        linkUri?: string,
+        label?: string,
+        text?: string,
+        area: {
+            x: number,
+            y: number,
+            width: number,
+            height: number
+        }
+    }>) {
+        this.session = session;
+        this.text = text;
+        this.baseUrl = baseUrl;
+        this.baseSize = baseSize;
+        this.actions = actions;
+    }
+    toAttachment(): botbuilder.IAttachment {
+        // throw new Error("Method not implemented.");
+        // console.log(this.session.message)
+        let address: any = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))
+        ) {
+            return {
+                contentType: "imagemap",
+                content: {
+                    baseUrl: this.baseUrl,
+                    baseSize: this.baseSize,
+                    actions: this.actions,
+                    text: this.text
+                }
+            }
+        } else {
+            // throw new Error("Method not implemented.");
+
+            return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
+        }
+
+    }
+}
 
 export class Sticker implements botbuilder.IIsAttachment {
-    packageId;
-    stickerId;
-    session;
+    packageId: string;
+    stickerId: string;
+    session: botbuilder.Session;
     constructor(session: botbuilder.Session, packageId: number, stickerId: number) {
         this.packageId = packageId.toString();
         this.stickerId = stickerId.toString();
@@ -23,7 +85,11 @@ export class Sticker implements botbuilder.IIsAttachment {
     toAttachment(): botbuilder.IAttachment {
         // throw new Error("Method not implemented.");
         // console.log(this.session.message)
-        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+        let address: any = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))
+        ) {
 
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
@@ -43,11 +109,11 @@ export class Sticker implements botbuilder.IIsAttachment {
 }
 
 export class Location implements botbuilder.IIsAttachment {
-    session;
-    title;
-    address;
-    latitude;
-    longitude;
+    session: botbuilder.Session;
+    title: string;
+    address: string;
+    latitude: number;
+    longitude: number;
     constructor(session: botbuilder.Session, title: string, address_or_desc: string, latitude: number, longitude: number) {
         this.session = session;
         this.title = title;
@@ -56,7 +122,11 @@ export class Location implements botbuilder.IIsAttachment {
         this.longitude = longitude;
     }
     toAttachment(): botbuilder.IAttachment {
-        if (this.session.message && ((this.session.message.source && this.session.message.source === "line") || (this.session.message.address.channel.source && this.session.message.address.channel.source === "line"))) {
+        let address: any = this.session.message.address;
+        if (this.session.message &&
+            ((this.session.message.source && this.session.message.source === "line") ||
+                (address.channel.source && address.channel.source === "line"))
+        ) {
             // if (this.session.message && this.session.message.source && this.session.message.source === "line") {
             return {
                 contentType: "location",
@@ -77,25 +147,25 @@ export class Location implements botbuilder.IIsAttachment {
 
 export class LineConnector implements botbuilder.IConnector {
     //const
-    headers;
-    endpoint;
-    botId;
+    headers: any;
+    endpoint: string;
+    botId: string;
     hasPushApi = false;
     autoGetUserProfile = false
 
     //from dispatch
-    replyToken;
-    options;
-    conversationId;
+    replyToken: any;
+    options: any;
+    conversationId: any;
 
-    conversationType;
+    conversationType: any;
     event_cache = [];
 
     //form botframework
-    handler;
-    timer;
+    handler: any;
+    timer: any;
 
-    constructor(options) {
+    constructor(options: any) {
         this.options = options || {};
         this.options.channelId = options.channelId || '';
         this.options.channelSecret = options.channelSecret || '';
@@ -118,7 +188,7 @@ export class LineConnector implements botbuilder.IConnector {
         this.endpoint = 'https://api.line.me/v2/bot';
         this.botId = options.channelId;
     }
-    private verify(rawBody, signature) {
+    private verify(rawBody: any, signature: any) {
         const hash = crypto.createHmac('sha256', this.options.channelSecret)
             .update(rawBody, 'utf8')
             .digest('base64');
@@ -127,11 +197,11 @@ export class LineConnector implements botbuilder.IConnector {
     listen() {
         console.log("listen")
         const parser = bodyParser.json({
-            verify: function (req: any, res, buf, encoding) {
+            verify: function (req: any, res: any, buf: any, encoding: any) {
                 req.rawBody = buf.toString(encoding);
             }
         });
-        return (req, res) => {
+        return (req: any, res: any) => {
             parser(req, res, () => {
                 // if (this.options.verify && !this.verify(req.rawBody, req.get('X-Line-Signature'))) {
                 //     return res.sendStatus(400);
@@ -142,11 +212,11 @@ export class LineConnector implements botbuilder.IConnector {
         };
     }
 
-    async serverlessWebhock(event) {
+    async serverlessWebhock(event: any) {
         this.dispatch(JSON.parse(event.body), null);
     }
 
-    private addReplyToken(replyToken) {
+    private addReplyToken(replyToken: any) {
 
         const _this = this;
         _this.replyToken = replyToken;
@@ -167,7 +237,7 @@ export class LineConnector implements botbuilder.IConnector {
 
         }, 2000)
     }
-    private dispatch(body, res) {
+    private dispatch(body: any, res: any) {
         console.log("dispatch")
         const _this = this;
         if (!body || !body.events) {
@@ -175,7 +245,7 @@ export class LineConnector implements botbuilder.IConnector {
 
             return;
         }
-        body.events.forEach(async event => {
+        body.events.forEach(async (event: any) => {
             console.log("event", event)
             if (VERIFY_TOKENS.indexOf(event.replyToken) !== -1) {
                 return;
@@ -341,10 +411,10 @@ export class LineConnector implements botbuilder.IConnector {
 
         })
     }
-    onEvent(handler) {
+    onEvent(handler: any) {
         this.handler = handler;
     };
-    private static createMessages(message) {
+    private static createMessages(message: any) {
         // console.log(message)
         if (typeof message === 'string') {
             return [{ type: 'text', text: message }];
@@ -360,7 +430,7 @@ export class LineConnector implements botbuilder.IConnector {
         }
         return [message];
     }
-    private post(path, body) {
+    private post(path: any, body: any) {
         console.log("post", path, body)
 
         // console.log(path, body)
@@ -372,11 +442,11 @@ export class LineConnector implements botbuilder.IConnector {
         // }
         return fetch(this.endpoint + path, { method: 'POST', headers: this.headers, body: JSON.stringify(body) });
     }
-    private get(path) {
+    private get(path: any) {
         // console.log("get", path);
         return fetch(this.endpoint + path, { method: 'GET', headers: this.headers });
     }
-    private async reply(replyToken, message) {
+    private async reply(replyToken: any, message: any) {
         console.log("reply")
 
         let m = LineConnector.createMessages(message);
@@ -388,13 +458,13 @@ export class LineConnector implements botbuilder.IConnector {
         let r = await this.post('/message/reply', body).then();
 
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+            r.json().then((json: any) => { console.log(json); throw new Error(json.toString()) });
 
         }
         return r;
     }
 
-    private async push(toId, message) {
+    private async push(toId: any, message: any) {
         let m = LineConnector.createMessages(message);
 
         const body = {
@@ -407,14 +477,14 @@ export class LineConnector implements botbuilder.IConnector {
         let r = await this.post('/message/push', body).then();
         // let r = await res.json().then();
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+            r.json().then((json: any) => { console.log(json); throw new Error(json.toString()) });
 
         }
 
         return r;
     }
 
-    async getUserProfile(userId) {
+    async getUserProfile(userId: string) {
         let url = '/profile/' + userId;
         // return url
         let res = await this.get(url).then()
@@ -441,7 +511,7 @@ export class LineConnector implements botbuilder.IConnector {
         return r;
     }
 
-    private async getMemberRrofile(userId) {
+    private async getMemberRrofile(userId: string) {
         if (this.conversationType === undefined) {
             throw new Error("not room or group")
             return;
@@ -470,18 +540,18 @@ export class LineConnector implements botbuilder.IConnector {
         let r = await this.post(url, body).then();
         // let r = await res.json().then();
         if (r.status === 400) {
-            r.json().then(json => { console.log(json); throw new Error(json.toString()) });
+            r.json().then((json: any) => { console.log(json); throw new Error(json.toString()) });
 
         }
         return r;
     }
 
 
-    private getRenderTemplate(event) {
+    private getRenderTemplate(event: any) {
         var _this = this;
         // console.log("getRenderTemplate", event)
         //20170825 should be there
-        let getButtonTemp = b => {
+        let getButtonTemp = (b: any) => {
             if (b.type === 'postBack') {
                 return {
                     "type": "postback",
@@ -522,7 +592,7 @@ export class LineConnector implements botbuilder.IConnector {
                 }
             }
         }
-        let getAltText = s => {
+        let getAltText = (s: string) => {
             return s.substring(0, 400)
         }
         // console.log("event", event)
@@ -556,7 +626,7 @@ export class LineConnector implements botbuilder.IConnector {
                                         type: "buttons",
                                         // title: event.text || "",
                                         text: `${event.text || ""}`,
-                                        actions: event.suggestedActions.actions.map(b =>
+                                        actions: event.suggestedActions.actions.map((b: any) =>
                                             getButtonTemp(b)
                                         )
                                     }
@@ -578,7 +648,7 @@ export class LineConnector implements botbuilder.IConnector {
                         // let be_same = event.attachments.reduce((c, n) => {
                         //     return c.contentType === n.contentType
                         // })
-                        var be_same = event.attachments.reduce(function (c, n) {
+                        var be_same = event.attachments.reduce(function (c: any, n: any) {
                             if (c.contentType === n.contentType) {
                                 return c;
                             } else {
@@ -592,7 +662,7 @@ export class LineConnector implements botbuilder.IConnector {
                             // let be_image_carousel = event.attachments.reduce((c, n) => {
                             //     return c.content.images.length === 1 && n.content.images.length === 1 && c.content.buttons.length === 1 && n.content.buttons.length === 1
                             // })
-                            var be_image_carousel = event.attachments.reduce(function (c, n) {
+                            var be_image_carousel = event.attachments.reduce(function (c: any, n: any) {
                                 if (c === false) {
                                     return false;
                                 }
@@ -609,7 +679,7 @@ export class LineConnector implements botbuilder.IConnector {
                                     "altText": getAltText(event.attachments[0].content.text),
                                     "template": {
                                         "type": "image_carousel",
-                                        "columns": event.attachments.map(a => {
+                                        "columns": event.attachments.map((a: any) => {
                                             return {
                                                 imageUrl: a.content.images[0].url,
                                                 action: getButtonTemp(a.content.buttons[0])
@@ -626,11 +696,11 @@ export class LineConnector implements botbuilder.IConnector {
                                         imageAspectRatio: "rectangle",
                                         imageSize: "cover",
 
-                                        columns: event.attachments.map(a => {
+                                        columns: event.attachments.map((a: any) => {
                                             let c: any = {
                                                 title: a.content.title || "",
                                                 text: getAltText(event.attachments[0].content.text),
-                                                actions: a.content.buttons.map(b =>
+                                                actions: a.content.buttons.map((b: any) =>
                                                     getButtonTemp(b)
                                                 )
                                             }
@@ -660,11 +730,66 @@ export class LineConnector implements botbuilder.IConnector {
 
                     }
 
-                    return event.attachments.map(a => {
+                    return event.attachments.map((a: any) => {
                         // console.log("a", a)
                         switch (a.contentType) {
                             case 'sticker':
                                 return { type: 'sticker', packageId: a.content.packageId, stickerId: a.content.stickerId }
+                            case `imagemap`:
+                                let t: any;
+                                t = {
+                                    type: "imagemap",
+                                    baseUrl: a.content.baseUrl,
+                                    baseSize: a.content.baseSize,
+                                    altText: getAltText(a.content.text),
+                                    actions: a.content.actions
+                                };
+                                return t;
+                                return {
+                                    "type": "imagemap",
+                                    "baseUrl": "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+                                    "altText": "This is an imagemap",
+                                    "baseSize": {
+                                        "width": 1040,
+                                        "height": 104
+                                    },
+                                    // "video": {
+                                    //     "originalContentUrl": "https://example.com/video.mp4",
+                                    //     "previewImageUrl": "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+                                    //     "area": {
+                                    //         "x": 0,
+                                    //         "y": 0,
+                                    //         "width": 1040,
+                                    //         "height": 585
+                                    //     },
+                                    //     "externalLink": {
+                                    //         "linkUri": "https://example.com/see_more.html",
+                                    //         "label": "See More"
+                                    //     }
+                                    // },
+                                    "actions": [
+                                        {
+                                            "type": "uri",
+                                            "linkUri": "https://google.com/",
+                                            "area": {
+                                                "x": 0,
+                                                "y": 0,
+                                                "width": 1040,
+                                                "height": 104
+                                            }
+                                        },
+                                        // {
+                                        //     "type": "message",
+                                        //     "text": "Hello",
+                                        //     "area": {
+                                        //         "x": 520,
+                                        //         "y": 586,
+                                        //         "width": 520,
+                                        //         "height": 454
+                                        //     }
+                                        // }
+                                    ]
+                                }
 
                             case 'location':
                                 return {
@@ -722,7 +847,7 @@ export class LineConnector implements botbuilder.IConnector {
                                             type: "confirm",
                                             title: a.content.title || "",
                                             text: `${a.content.title || ""}${a.content.subtitle || ""}`,
-                                            actions: a.content.buttons.map(b =>
+                                            actions: a.content.buttons.map((b: any) =>
                                                 getButtonTemp(b)
                                             )
                                         }
@@ -736,7 +861,7 @@ export class LineConnector implements botbuilder.IConnector {
                                             type: "buttons",
                                             title: a.content.title || "",
                                             text: `${a.content.title || ""}${a.content.subtitle || ""}`,
-                                            actions: a.content.buttons.map(b =>
+                                            actions: a.content.buttons.map((b: any) =>
                                                 getButtonTemp(b)
                                             )
                                         }
@@ -758,7 +883,7 @@ export class LineConnector implements botbuilder.IConnector {
                 }
         }
     }
-    send(messages: botbuilder.IMessage[], done) {
+    send(messages: botbuilder.IMessage[], done: any) {
         // let ts = [];
         const _this = this;
 
@@ -773,10 +898,10 @@ export class LineConnector implements botbuilder.IConnector {
                 _this.conversationId = e.address.channelId;
                 _this.push(_this.conversationId, _this.getRenderTemplate(e))
             } else if (_this.replyToken) {
-                let t = _this.getRenderTemplate(e)
+                let t: Array<any> = _this.getRenderTemplate(e)
                 // console.log(t)
                 if (Array.isArray(t)) {
-                    _this.event_cache = _this.event_cache.concat(t)
+                    _this.event_cache = _this.event_cache.concat(<any>t)
                 } else {
                     _this.event_cache.push(t)
                 }
@@ -792,7 +917,7 @@ export class LineConnector implements botbuilder.IConnector {
             }
         })
     }
-    startConversation(address, callback) {
+    startConversation(address: any, callback: any) {
         console.log(address);
         console.log(callback);
     }

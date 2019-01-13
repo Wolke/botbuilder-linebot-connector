@@ -87,27 +87,42 @@ bot.dialog("/", s => {
             }catch(e){
                 s.send("can`t get user profile!")
             }
+            //image map
+            
+        s.send(new builder.Message(s).addAttachment(new ImageMap(s,
+            "test",
+            "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+            {
+                "width": 1040,
+                "height": 1040
+            },
+            [
+                {
+                    "type": "uri",
+                    "linkUri": "https://google.com/",
+                    "area": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 333,
+                        "height": 1040
+                    }
+                },
+                {
+                    "type": "message",
+                    "label": "good",
+                    "text": "hot",
+                    "area": {
+                        "x": 333,
+                        "y": 0,
+                        "width": 333,
+                        "height": 1040
+                    }
+                },
+            ]
 
-    console.log("s.message",s.message)
-//         s.message { timestamp: '2018-02-08T13:31:33.333Z',
-//   source: 'line',
-//   address: 
-//    { conversation:
-//       { name: 'room', // room , group , user
-//         id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d',
-//         isGroup: true }, / room or group will be true
-//      channel: { id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' },
-//      user: { name: 'room', id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' } },
-//   from: // 
-//    { id: 'Ub2da2efe8838ade6f5319b55500ea606', 
-//      name: '綠蓋茶', // autoGetUserProfile<==set true , and must add friend before, or get undefined below
-//      pictureUrl: 'http://dl.profile.line-cdn.net/0h_18pqKOFAB4FCSxKUJx_STlMDnNyJwZWfWxLenIPCSsgMUdIPmdHeHBeWCYtOkZBaz0afXMLXid4',
-//      statusMessage: undefined },
-//   id: '7442942284795',
-//   type: 'message',
-//   text: '你好',
-//   agent: 'botbuilder',
-//   user: { name: 'room', id: 'Rf5e5a95cd35d35a9a9d954ff4df3ff4d' } }
+
+        )));
+
     s.send(new builder.Message(s)
         /* Sticker  */
         .addAttachment(
