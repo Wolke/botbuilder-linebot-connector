@@ -11,6 +11,257 @@ const VERIFY_TOKENS = [
 ];
 class ImageMap {
     constructor(text, baseUrl, baseSize, actions) {
+        this.ONE_IMAGE = 11;
+        this.TWO_IMAGE_VERTICAL = 21;
+        this.TWO_IMAGE_HORIZONTAL = 22;
+        this.THREE_IMAGE_VERTICAL = 31;
+        this.THREE_IMAGE_HORIZONTAL = 32;
+        this.FOUR_IMAGE = 40;
+        this.SIX_IMAGE = 60;
+        this.getImageMapActions = (type, width, height, open_urls) => {
+            let IMAGE_WIDTH = width;
+            let IMAGE_HEIGHT = height;
+            // console.log(open_urls)
+            /*
+            1: one image
+            2: two image
+            3. three image with 水平
+            4. three image with 垂直
+            */
+            switch (type) {
+                case this.ONE_IMAGE:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT
+                            }
+                        }
+                    ];
+                case this.TWO_IMAGE_VERTICAL:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": 0,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        }
+                    ];
+                case this.TWO_IMAGE_HORIZONTAL:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": IMAGE_WIDTH / 2,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT
+                            }
+                        }
+                    ];
+                case this.THREE_IMAGE_VERTICAL:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT / 3
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": 0,
+                                "y": IMAGE_HEIGHT / 3,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT / 3
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[2],
+                            "area": {
+                                "x": 0,
+                                "y": (IMAGE_HEIGHT / 3) * 2,
+                                "width": IMAGE_WIDTH,
+                                "height": IMAGE_HEIGHT / 3
+                            }
+                        }
+                    ];
+                case this.THREE_IMAGE_HORIZONTAL:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": IMAGE_WIDTH / 3,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[2],
+                            "area": {
+                                "x": (IMAGE_WIDTH / 3) * 2,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT
+                            }
+                        }
+                    ];
+                case this.FOUR_IMAGE:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": IMAGE_WIDTH / 2,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[2],
+                            "area": {
+                                "x": 0,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[3],
+                            "area": {
+                                "x": IMAGE_WIDTH / 2,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH / 2,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                    ];
+                case this.SIX_IMAGE:
+                    return [
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[0],
+                            "area": {
+                                "x": 0,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[1],
+                            "area": {
+                                "x": IMAGE_WIDTH / 3,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[2],
+                            "area": {
+                                "x": (IMAGE_WIDTH / 3) * 2,
+                                "y": 0,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[3],
+                            "area": {
+                                "x": 0,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[4],
+                            "area": {
+                                "x": IMAGE_WIDTH / 3,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        },
+                        {
+                            "type": "uri",
+                            "linkUri": open_urls[5],
+                            "area": {
+                                "x": (IMAGE_WIDTH / 3) * 2,
+                                "y": IMAGE_HEIGHT / 2,
+                                "width": IMAGE_WIDTH / 3,
+                                "height": IMAGE_HEIGHT / 2
+                            }
+                        }
+                    ];
+            }
+        };
         // this.address = address;
         this.text = text;
         this.baseUrl = baseUrl;
@@ -27,26 +278,6 @@ class ImageMap {
                 text: this.text
             }
         };
-        // throw new Error("Method not implemented.");
-        // console.log(this.session.message)
-        // let address: any = this.session.message.address;
-        // if (this.session.message &&
-        //     ((this.session.message.source && this.session.message.source === "line") ||
-        //         (address.channel.source && address.channel.source === "line"))
-        // ) {
-        //     return {
-        //         contentType: "imagemap",
-        //         content: {
-        //             baseUrl: this.baseUrl,
-        //             baseSize: this.baseSize,
-        //             actions: this.actions,
-        //             text: this.text
-        //         }
-        //     }
-        // } else {
-        //     // throw new Error("Method not implemented.");
-        //     return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
-        // }
     }
 }
 exports.ImageMap = ImageMap;

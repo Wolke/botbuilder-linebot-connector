@@ -12,11 +12,11 @@ server.listen(process.env.port || process.env.PORT || 3000, function () {
 });
 
 var connector = new LineConnector({
-    hasPushApi: true, //you need to pay push api >.,<
-    autoGetUserProfile: true,
+    hasPushApi: false, //you need to pay push api >.,<
+    autoGetUserProfile: false,
     channelId: "1619224714",
     channelSecret: "559047bbef9fb95ee17aecb28901772b",
-    channelAccessToken: "BDQorhMkgNRKFiCe7VFjEIirL3EOi+s9ZenYRmYupSSyUJSoZwxUKPIFlSKZfv3QOYwD73aUFTIZ6AmGZ3YkM9d+ChZKOKp8CYoaZZot3eNhuZyAumEUy5tN5pWYbQs/oz6g8ZTGK7ko/fi87stCUgdB04t89/1O/w1cDnyilFU="
+    channelAccessToken: "U7U/nNEGUhOBaq1hfiuEDKqVk3WerGrjQXuev44RBMAD6KbLmKq7aZ7Vjvz324GDOYwD73aUFTIZ6AmGZ3YkM9d+ChZKOKp8CYoaZZot3eM7fYClPE0CasqtEZqwbPIjKwMxI7rUZUUIcjEjwgwlbwdB04t89/1O/w1cDnyilFU="
 });
 
 server.post('/line', connector.listen());
@@ -29,6 +29,38 @@ bot.dialog('/', [
         // console.log(s.message.address)
 
         // s.message.address
+        s.send(new builder.Message(s).addAttachment(new ImageMap(
+            "test",
+            "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+            {
+                "width": 1040,
+                "height": 1040
+            },
+            ImageMap.getImageMapActions(ImageMap.ONE_IMAGE, 1040, 1040, ["https://google.com"])
+            // [
+            //     {
+            //         "type": "uri",
+            //         "linkUri": "https://google.com/",
+            //         "area": {
+            //             "x": 0,
+            //             "y": 0,
+            //             "width": 333,
+            //             "height": 1040
+            //         }
+            //     },
+            //     {
+            //         "type": "message",
+            //         "label": "good",
+            //         "text": "hot",
+            //         "area": {
+            //             "x": 333,
+            //             "y": 0,
+            //             "width": 333,
+            //             "height": 1040
+            //         }
+            //     },
+            // ]
+        )))
         // s.send(s.message.text)
         // s.send(new builder.Message(s).addAttachment(new ImageMap(s,
         //     "test",
@@ -79,6 +111,7 @@ bot.dialog('leave'
     matches: /^leave$/i
 });
 
+
 bot.on('conversationUpdate', function (message) {
     // console.log("conversationUpdate", message)
     switch (message.text) {
@@ -113,23 +146,23 @@ bot.dialog("hello", [
 
 
 
-var a = {
-    conversation: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
-    channel: { id: 'U4d84576ad6728b67714cfef79650e6fb', source: 'line' },
-    user: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
-    channelId: 'U4d84576ad6728b67714cfef79650e6fb'
-}
-var reply = new builder.Message()
-    .address(<any>a)
-    // .addAttachment(new Sticker(1, 1))
-    // .text("hello2")
-    .addAttachment(new ImageMap(
-        "test",
-        "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
-        {
-            "width": 1040,
-            "height": 1040
-        },
-        []
-    ))
-bot.send(reply);
+// var a = {
+//     conversation: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
+//     channel: { id: 'U4d84576ad6728b67714cfef79650e6fb', source: 'line' },
+//     user: { name: 'user', id: 'U4d84576ad6728b67714cfef79650e6fb' },
+//     channelId: 'U4d84576ad6728b67714cfef79650e6fb'
+// }
+// var reply = new builder.Message()
+//     .address(<any>a)
+//     // .addAttachment(new Sticker(1, 1))
+//     // .text("hello2")
+//     .addAttachment(new ImageMap(
+//         "test",
+//         "https://www.profolio.com/sites/default/files/styles/1920x1040/public/field/image/Bikini_Girls_adx.jpg?itok=uciEvomy",
+//         {
+//             "width": 1040,
+//             "height": 1040
+//         },
+//         []
+//     ))
+// bot.send(reply);

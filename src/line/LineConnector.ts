@@ -13,6 +13,18 @@ const VERIFY_TOKENS = [
     'ffffffffffffffffffffffffffffffff'
 ]
 export class ImageMap implements botbuilder.IIsAttachment {
+
+    static ONE_IMAGE = 11;
+
+    static TWO_IMAGE_VERTICAL = 21;
+    static TWO_IMAGE_HORIZONTAL = 22;
+
+    static THREE_IMAGE_VERTICAL = 31;
+    static THREE_IMAGE_HORIZONTAL = 32;
+
+    static FOUR_IMAGE = 40;
+    static SIX_IMAGE = 60;
+
     // session: botbuilder.Session;
     // address: botbuilder.IAddress
     text: string;
@@ -58,27 +70,251 @@ export class ImageMap implements botbuilder.IIsAttachment {
                 text: this.text
             }
         }
-        // throw new Error("Method not implemented.");
-        // console.log(this.session.message)
-        // let address: any = this.session.message.address;
-        // if (this.session.message &&
-        //     ((this.session.message.source && this.session.message.source === "line") ||
-        //         (address.channel.source && address.channel.source === "line"))
-        // ) {
-        //     return {
-        //         contentType: "imagemap",
-        //         content: {
-        //             baseUrl: this.baseUrl,
-        //             baseSize: this.baseSize,
-        //             actions: this.actions,
-        //             text: this.text
-        //         }
-        //     }
-        // } else {
-        //     // throw new Error("Method not implemented.");
+    }
+    static getImageMapActions: any = (type: number, width: number, height: number, open_urls: Array<string>) => {
+        let IMAGE_WIDTH = width;
+        let IMAGE_HEIGHT = height;
+        // console.log(open_urls)
+        /*
+        1: one image
+        2: two image
+        3. three image with 水平
+        4. three image with 垂直
+        */
+        switch (type) {
+            case ImageMap.ONE_IMAGE:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT
+                        }
+                    }
+                ]
+            case ImageMap.TWO_IMAGE_VERTICAL:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": 0,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    }
+                ]
+            case ImageMap.TWO_IMAGE_HORIZONTAL:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": IMAGE_WIDTH / 2,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT
+                        }
+                    }
+                ]
+            case ImageMap.THREE_IMAGE_VERTICAL:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT / 3
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": 0,
+                            "y": IMAGE_HEIGHT / 3,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT / 3
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[2],
+                        "area": {
+                            "x": 0,
+                            "y": (IMAGE_HEIGHT / 3) * 2,
+                            "width": IMAGE_WIDTH,
+                            "height": IMAGE_HEIGHT / 3
+                        }
+                    }
+                ]
+            case ImageMap.THREE_IMAGE_HORIZONTAL:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": IMAGE_WIDTH / 3,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[2],
+                        "area": {
+                            "x": (IMAGE_WIDTH / 3) * 2,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT
+                        }
+                    }
+                ]
+            case ImageMap.FOUR_IMAGE:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": IMAGE_WIDTH / 2,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[2],
+                        "area": {
+                            "x": 0,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[3],
+                        "area": {
+                            "x": IMAGE_WIDTH / 2,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH / 2,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
 
-        //     return new botbuilder.MediaCard().text("this is a image map!!").toAttachment()
-        // }
+                ]
+            case ImageMap.SIX_IMAGE:
+                return [
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[0],
+                        "area": {
+                            "x": 0,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[1],
+                        "area": {
+                            "x": IMAGE_WIDTH / 3,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[2],
+                        "area": {
+                            "x": (IMAGE_WIDTH / 3) * 2,
+                            "y": 0,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[3],
+                        "area": {
+                            "x": 0,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[4],
+                        "area": {
+                            "x": IMAGE_WIDTH / 3,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    },
+                    {
+                        "type": "uri",
+                        "linkUri": open_urls[5],
+                        "area": {
+                            "x": (IMAGE_WIDTH / 3) * 2,
+                            "y": IMAGE_HEIGHT / 2,
+                            "width": IMAGE_WIDTH / 3,
+                            "height": IMAGE_HEIGHT / 2
+                        }
+                    }
+                ]
+        }
 
     }
 }
