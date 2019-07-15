@@ -483,7 +483,7 @@ export class LineConnector implements botbuilder.IConnector {
             _this.replyToken = null;
             _this.event_cache = [];
 
-        }, 2000)
+        }, 10000)
     }
     private dispatch(body: any, res: any) {
         console.log("dispatch")

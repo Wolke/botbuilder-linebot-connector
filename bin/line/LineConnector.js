@@ -412,7 +412,7 @@ class LineConnector {
             }
             _this.replyToken = null;
             _this.event_cache = [];
-        }, 2000);
+        }, 10000);
     }
     dispatch(body, res) {
         console.log("dispatch");

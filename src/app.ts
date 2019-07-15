@@ -25,8 +25,12 @@ server.post('/line', connector.listen());
 var bot = new builder.UniversalBot(connector)
 
 bot.dialog('/', [
-    s => {
-        // console.log(s.message.address)
+    async (s) => {
+        let a: any = s.message.address
+        console.log(a)
+
+        let r = await connector.getUserProfile(a.channelId)
+        console.log("r", r)
 
         // s.message.address
         s.send(new builder.Message(s).addAttachment(new ImageMap(
