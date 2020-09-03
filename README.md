@@ -272,7 +272,4 @@ The MIT license
 
 [npm-url]: https://www.npmjs.com/package/botbuilder-linebot-connector
 
-
-
-
-#If you like this, Welcome to give me Star
+# If you like this, Welcome to give me Star
