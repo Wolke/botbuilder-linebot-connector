@@ -14,9 +14,9 @@ server.listen(process.env.port || process.env.PORT || 3000, function () {
 var connector = new LineConnector({
     hasPushApi: true, //you need to pay push api >.,<
     autoGetUserProfile: false,
-    channelId: "1619224714",
-    channelSecret: "559047bbef9fb95ee17aecb28901772b",
-    channelAccessToken: "U7U/nNEGUhOBaq1hfiuEDKqVk3WerGrjQXuev44RBMAD6KbLmKq7aZ7Vjvz324GDOYwD73aUFTIZ6AmGZ3YkM9d+ChZKOKp8CYoaZZot3eM7fYClPE0CasqtEZqwbPIjKwMxI7rUZUUIcjEjwgwlbwdB04t89/1O/w1cDnyilFU="
+    channelId: "LINE-CHANNE-ID",
+    channelSecret: "LINE-CHANNEL-SECRET",
+    channelAccessToken: "LINE-CHANNEL-ACCESS-TOKEN"
 });
 
 server.post('/line', connector.listen());
